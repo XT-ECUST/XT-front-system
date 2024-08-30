@@ -7,26 +7,18 @@
           <Menu />
         </el-icon>
       </el-button>
-      <!-- <h4>
-        <el-breadcrumb separator="/" class="brand">
-          <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-          <el-breadcrumb-item :to="currentMenu.path" v-if="currentMenu">{{
-            currentMenu.name
-          }}</el-breadcrumb-item>
-        </el-breadcrumb>
-      </h4> -->
     </div>
 
     <!-- 右侧头像 -->
     <div class="r-container">
-      <el-dropdown>
+      <el-dropdown trigger="click" @command="handleCommand">
         <span class="el-dropdown-link">
           <img src="../../assets/images/wogua.jpg" alt="" class="wogua" />
         </span>
         <template #dropdown>
           <el-dropdown-menu>
-            <el-dropdown-item>个人中心</el-dropdown-item>
-            <el-dropdown-item @click="logout">退出</el-dropdown-item>
+            <el-dropdown-item command="user">个人中心</el-dropdown-item>
+            <el-dropdown-item divided command="loginout">退出</el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>
@@ -35,22 +27,36 @@
 </template>
 
 <script>
-import { defineComponent } from "vue";
 import { useStore } from "vuex";
+import { useRouter } from "vue-router";
 
-export default defineComponent({
-  name: "Header",
+export default {
   setup() {
+    const router = useRouter();
     const store = useStore();
+
     // 1. 侧边栏折叠
     const handleCollapse = () => {
       store.commit("setIsCollapse");
     };
-    // 2. 退出登录
-    const logout = () => { };
-    return { handleCollapse, logout };
+
+    // 2. 处理下拉菜单命令
+    const handleCommand = (command) => {
+      if (command === "loginout") {
+        localStorage.removeItem("token");
+        localStorage.removeItem("username");
+        router.push("/login");
+      } else if (command === "user") {
+        router.push("/ucenter");
+      }
+    };
+
+    return {
+      handleCollapse,
+      handleCommand,
+    };
   },
-});
+};
 </script>
 
 <style scoped lang="less">
@@ -81,6 +87,5 @@ export default defineComponent({
     color: #fff !important;
     cursor: pointer;
   }
-
 }
 </style>

@@ -1,5 +1,12 @@
 import { createRouter, createWebHashHistory } from "vue-router";
+
+
 const routes = [
+  {
+    path: "/login",
+    component: () => import("../views/pages/login.vue"),
+    meta: { title: "登录" },
+  },
   {
     path: "/",
     component: () => import("../views/Main/Main.vue"),
@@ -82,7 +89,20 @@ const routes = [
     ],
   },
 ];
-export default createRouter({
+const router = createRouter({
   history: createWebHashHistory(),
   routes,
 });
+
+// 添加全局前置守卫
+router.beforeEach((to, from, next) => {
+  // 假设除了登录页面都需要登录
+  if (to.path!== "/login" &&!localStorage.getItem("token")) {
+    // 如果未登录，跳转到登录页面
+    next({ path: "/login" });
+  } else {
+    // 已登录或者是登录页面，允许访问
+    next();
+  }
+});
+export default router;
