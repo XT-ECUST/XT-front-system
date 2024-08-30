@@ -1,9 +1,5 @@
 <template>UserManage</template>
 
-<script>
-export default {
-  name: "UserManage",
-};
-</script>
+<script></script>
 
 <style></style>
