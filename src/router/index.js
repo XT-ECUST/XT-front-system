@@ -5,7 +5,12 @@ const routes = [
   {
     path: "/login",
     component: () => import("../views/pages/login.vue"),
-    meta: { title: "登录" },
+    meta: { title: "用户登录" },
+  },
+  {
+    path: "/register",
+    component: () => import("../views/pages/register.vue"),
+    meta: { title: "用户注册" },
   },
   {
     path: "/",
@@ -97,11 +102,11 @@ const router = createRouter({
 // 添加全局前置守卫
 router.beforeEach((to, from, next) => {
   // 假设除了登录页面都需要登录
-  if (to.path!== "/login" &&!localStorage.getItem("token")) {
-    // 如果未登录，跳转到登录页面
-    next({ path: "/login" });
-  } else {
-    // 已登录或者是登录页面，允许访问
+  if (to.path === "/login" || to.path === "/register") {
+    next();
+  }else if(!sessionStorage.getItem('token')){
+    next('/login');
+  }else{
     next();
   }
 });
