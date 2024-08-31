@@ -80,7 +80,7 @@ const registerRef = ref(null);
 const rules = {
   jobnumber: [
     {required: true, message: "请输入用户名", trigger: "blur"},
-    {min: 8, max: 8, message: "工号长度为8位", trigger: "blur"},
+    {min: 8, max: 8, message: "用户名长度为8位", trigger: "blur"},
   ],
   password: [
     {required: true, message: "请输入密码", trigger: "blur"},
