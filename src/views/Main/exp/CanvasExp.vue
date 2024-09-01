@@ -19,22 +19,10 @@
       <div>
         <div class="canvas-menu">
           <el-tooltip effect="light" content="刷新画布" placement="top">
-            <el-button
-              size="small"
-              icon="Refresh"
-              circle
-              style="margin-left: 12px"
-              @click="handleClean"
-            />
+            <el-button size="small" icon="Refresh" circle style="margin-left: 12px" @click="handleClean" />
           </el-tooltip>
           <el-tooltip effect="light" content="数据库" placement="top">
-            <el-button
-              size="small"
-              :icon="Coin"
-              circle
-              style="margin-left: 25px"
-              @click="showDrawer = true"
-            />
+            <el-button size="small" :icon="Coin" circle style="margin-left: 25px" @click="showDrawer = true" />
           </el-tooltip>
         </div>
         <div class="canvas-card">
@@ -42,109 +30,45 @@
         </div>
       </div>
     </div>
-    <el-drawer
-      v-model="showDrawer"
-      title="资源管理"
-      :direction="direction"
-      size="80%"
-    >
+    <el-drawer v-model="showDrawer" title="资源管理" :direction="direction" size="80%">
       <div style="margin: 10px 80px 0px 80px">
         <!-- 文件查询 -->
         <div class="search-container">
           <el-form :inline="true" :model="fileSearch">
             <el-form-item label="文件名：">
-              <el-input
-                v-model="fileSearch.name"
-                placeholder="请输入文件名"
-                clearable
-              />
+              <el-input v-model="fileSearch.name" placeholder="请输入文件名" clearable />
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" icon="Search" @click="onsubmitSearch"
-                >查询</el-button
-              >
-              <el-button type="info" icon="RefreshLeft" @click="resetFind"
-                >清空</el-button
-              >
+              <el-button type="primary" icon="Search" @click="onsubmitSearch">查询</el-button>
+              <el-button type="info" icon="RefreshLeft" @click="resetFind">清空</el-button>
             </el-form-item>
           </el-form>
         </div>
         <!-- 文件上传与批量上传按钮 -->
         <div>
-          <el-button
-            type="primary"
-            plain
-            icon="Promotion"
-            @click="handleUploadFile"
-            >上传文件</el-button
-          >
-          <el-button type="danger" plain icon="Delete" @click="deleteByIds"
-            >批量删除</el-button
-          >
+          <el-button type="primary" plain icon="Promotion" @click="handleUploadFile">上传文件</el-button>
+          <el-button type="danger" plain icon="Delete" @click="deleteByIds">批量删除</el-button>
         </div>
         <!-- 表格展示数据 -->
-        <el-table
-          :data="fileData"
-          style="width: 85%; margin: 10px 0"
-          border
-          @selection-change="handleSelectionChange"
-        >
-          <el-table-column
-            type="selection"
-            width="55"
-            align="center"
-          ></el-table-column>
-          <el-table-column
-            fixed
-            prop="id"
-            label="序号"
-            width="140"
-            header-align="center"
-            align="center"
-          >
-            <template #default="{$index}">
+        <el-table :data="fileData" style="width: 85%; margin: 10px 0" border @selection-change="handleSelectionChange">
+          <el-table-column type="selection" width="55" align="center"></el-table-column>
+          <el-table-column fixed prop="id" label="序号" width="140" header-align="center" align="center">
+            <template #default="{ $index }">
               {{ $index + 1 }}
             </template>
           </el-table-column>
-          <el-table-column
-            prop="name"
-            label="名称"
-            width="250px"
-            header-align="center"
-            align="center"
-          />
-          <el-table-column
-            label="上传时间"
-            width="300px"
-            header-align="center"
-            align="center"
-          >
-            <template #default="{row}">
+          <el-table-column prop="name" label="名称" width="250px" header-align="center" align="center" />
+          <el-table-column label="上传时间" width="300px" header-align="center" align="center">
+            <template #default="{ row }">
               {{ row.createTime ? row.createTime.replace("T", " ") : "" }}
             </template>
           </el-table-column>
-          <el-table-column
-            fixed="right"
-            label="操作"
-            width="250px"
-            align="center"
-          >
-            <template #default="{row}">
+          <el-table-column fixed="right" label="操作" width="250px" align="center">
+            <template #default="{ row }">
               <el-button type="primary" size="small" plain icon="Download">
-                <a
-                  :href="row.path"
-                  style="text-decoration: none; color: inherit"
-                  >下载</a
-                >
+                <a :href="row.path" style="text-decoration: none; color: inherit">下载</a>
               </el-button>
-              <el-button
-                type="danger"
-                size="small"
-                plain
-                icon="delete"
-                @click="deleFile(row.id)"
-                >删除</el-button
-              >
+              <el-button type="danger" size="small" plain icon="delete" @click="deleFile(row.id)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -161,11 +85,7 @@
         ></el-pagination>
         <!-- 上传文件对话框 -->
         <el-dialog v-model="showFileForm" title="上传文件" width="500px">
-          <el-form
-            :model="fileMeta"
-            label-width="auto"
-            style="max-width: 600px"
-          >
+          <el-form :model="fileMeta" label-width="auto" style="max-width: 600px">
             <el-form-item label="文件名">
               <el-input v-model="fileMeta.name" placeholder="请输入文件名" />
             </el-form-item>
@@ -180,9 +100,7 @@
               <el-icon class="el-icon--upload">
                 <UploadFilled />
               </el-icon>
-              <div class="el-upload__text"
-                >Drop file here or <em>click to upload</em></div
-              >
+              <div class="el-upload__text">Drop file here or <em>click to upload</em></div>
               <template #tip>
                 <div class="el-upload__tip">仅限上传一个文件</div>
               </template>
@@ -410,23 +328,14 @@
     <el-dialog v-model="showReDialog" title="实验结果：" width="600px">
       <h4 style="text-align: center">运行进度：</h4>
       <div class="demo-progress">
-        <el-progress
-          type="dashboard"
-          :percentage="percentage"
-          :color="colors"
-          width="80"
-        />
+        <el-progress type="dashboard" :percentage="percentage" :color="colors" width="80" />
       </div>
       <!-- <span>{{ resultData }}</span> -->
-      <el-button @click="initChart" style="margin-left: 43%"
-        >显示图表</el-button
-      >
+      <el-button @click="initChart" style="margin-left: 43%">显示图表</el-button>
       <div ref="chartContainer" style="width: 100%; height: 400px"></div>
       <template #footer>
         <div class="dialog-footer">
-          <el-button type="primary" @click="showReDialog = false"
-            >确定</el-button
-          >
+          <el-button type="primary" @click="showReDialog = false">确定</el-button>
         </div>
       </template>
     </el-dialog>
@@ -440,9 +349,7 @@
         :on-success="handleUpload"
       >
         <el-icon class="el-icon--upload"><upload-filled /></el-icon>
-        <div class="el-upload__text">
-          Drop file here or <em>click to upload</em>
-        </div>
+        <div class="el-upload__text"> Drop file here or <em>click to upload</em> </div>
         <template #tip>
           <div class="el-upload__tip"> 请上传要处理的原始数据 </div>
         </template>
@@ -473,18 +380,11 @@
         <el-form-item v-if="selectedAlgorithm[1] === 'LLE'" label="n_neighbors">
           <el-input v-model="cleanForm.reduc.n_neighbors" />
         </el-form-item>
-        <el-form-item
-          v-if="selectedAlgorithm[1] === 't-SNE'"
-          label="perplexity"
-        >
+        <el-form-item v-if="selectedAlgorithm[1] === 't-SNE'" label="perplexity">
           <el-input v-model="cleanForm.reduc.perplexity" />
         </el-form-item>
         <el-form-item>
-          <el-button
-            type="primary"
-            :loading="loading"
-            @click="onsubmitcleanForm"
-          >
+          <el-button type="primary" :loading="loading" @click="onsubmitcleanForm">
             {{ loading ? "Submitting ..." : "提交" }}
           </el-button>
           <el-button @click="showCleanDialog = false">取消</el-button>
@@ -493,15 +393,9 @@
       </el-form>
     </el-dialog>
     <!--文件下载模块-->
-    <el-dialog
-      v-model="showDownloadDialog"
-      title="数据处理后文件下载"
-      width="600px"
-    >
+    <el-dialog v-model="showDownloadDialog" title="数据处理后文件下载" width="600px">
       <el-button type="primary" size="small" plain icon="Download">
-        <a :href="oss_url" style="text-decoration: none; color: inherit"
-          >下载</a
-        >
+        <a :href="oss_url" style="text-decoration: none; color: inherit">下载</a>
       </el-button>
       <el-button
         type="primary"
@@ -532,32 +426,24 @@
 </template>
 
 <script setup lang="ts">
-import {Graph} from "@antv/x6";
-import {ref, reactive, onMounted} from "vue";
+import { Graph } from "@antv/x6";
+import { ref, reactive, onMounted } from "vue";
 import axios from "axios";
 import * as echarts from "echarts";
-import {UploadFilled} from "@element-plus/icons-vue";
-import {ElMessage, ElMessageBox} from "element-plus";
-import {
-  Check,
-  Delete,
-  Edit,
-  Message,
-  Search,
-  Star,
-  Coin,
-} from "@element-plus/icons-vue";
-import type {DrawerProps} from "element-plus";
+import { UploadFilled } from "@element-plus/icons-vue";
+import { ElMessage, ElMessageBox } from "element-plus";
+import { Check, Delete, Edit, Message, Search, Star, Coin } from "@element-plus/icons-vue";
+import type { DrawerProps } from "element-plus";
 
 const percentage = ref(0);
 const cleanFilePath = ref("");
 const oss_url = ref("");
 const colors = [
-  {color: "#f56c6c", percentage: 20},
-  {color: "#e6a23c", percentage: 40},
-  {color: "#5cb87a", percentage: 60},
-  {color: "#1989fa", percentage: 80},
-  {color: "#6f7ad3", percentage: 100},
+  { color: "#f56c6c", percentage: 20 },
+  { color: "#e6a23c", percentage: 40 },
+  { color: "#5cb87a", percentage: 60 },
+  { color: "#1989fa", percentage: 80 },
+  { color: "#6f7ad3", percentage: 100 },
 ];
 
 const QueForm = reactive({
@@ -582,33 +468,33 @@ const algorithmOptions = [
     value: "dimensionality_reduction",
     label: "数据降维算法",
     children: [
-      {value: "PCA", label: "PCA"},
-      {value: "KPCA", label: "KPCA"},
-      {value: "LDA", label: "LDA"},
-      {value: "LLE", label: "LLE"},
-      {value: "t-SNE", label: "t-SNE"},
+      { value: "PCA", label: "PCA" },
+      { value: "KPCA", label: "KPCA" },
+      { value: "LDA", label: "LDA" },
+      { value: "LLE", label: "LLE" },
+      { value: "t-SNE", label: "t-SNE" },
     ],
   },
   {
     value: "data_cleaning",
     label: "数据清洗算法",
     children: [
-      {value: "Z-Score", label: "Z-Score"},
-      {value: "Min-Max", label: "Min-Max"},
-      {value: "IQR", label: "IQR"},
-      {value: "MEAN", label: "MEAN"},
-      {value: "MEDIAN", label: "MEDIAN"},
-      {value: "MODE", label: "MODE"},
-      {value: "3sigma", label: "3sigma"},
+      { value: "Z-Score", label: "Z-Score" },
+      { value: "Min-Max", label: "Min-Max" },
+      { value: "IQR", label: "IQR" },
+      { value: "MEAN", label: "MEAN" },
+      { value: "MEDIAN", label: "MEDIAN" },
+      { value: "MODE", label: "MODE" },
+      { value: "3sigma", label: "3sigma" },
     ],
   },
   {
     value: "data_convert",
     label: "数据转换算法",
     children: [
-      {value: "Standard", label: "Standard"},
-      {value: "Norm", label: "Norm"},
-      {value: "One-Hot", label: "One-Hot"},
+      { value: "Standard", label: "Standard" },
+      { value: "Norm", label: "Norm" },
+      { value: "One-Hot", label: "One-Hot" },
     ],
   },
 ];
@@ -694,39 +580,34 @@ const moduleList = [
   {
     id: 1,
     name: "优化问题选择模块",
-    image:
-      "https://cdn.pixabay.com/photo/2016/10/08/18/35/help-1724292_640.png",
+    image: "https://cdn.pixabay.com/photo/2016/10/08/18/35/help-1724292_640.png",
   },
   {
     id: 2,
     name: "算法与参数配置模块",
-    image:
-      "https://cdn.pixabay.com/photo/2023/04/19/19/26/cpu-7938434_1280.png",
+    image: "https://cdn.pixabay.com/photo/2023/04/19/19/26/cpu-7938434_1280.png",
   },
   {
     id: 3,
     name: "优化模型模块",
-    image:
-      "https://cdn.pixabay.com/photo/2020/11/07/10/25/machine-learning-5720531_1280.png",
+    image: "https://cdn.pixabay.com/photo/2020/11/07/10/25/machine-learning-5720531_1280.png",
   },
   {
     id: 4,
     name: "结果显示模块",
-    image:
-      "https://cdn.pixabay.com/photo/2017/03/08/14/20/flat-2126880_1280.png",
+    image: "https://cdn.pixabay.com/photo/2017/03/08/14/20/flat-2126880_1280.png",
   },
   {
     id: 5,
     name: "数据处理算法模块",
-    image:
-      "https://cdn.pixabay.com/photo/2019/12/31/18/53/chart-4732546_640.png",
+    image: "https://cdn.pixabay.com/photo/2019/12/31/18/53/chart-4732546_640.png",
   },
 ];
 
 let graph = null;
 
 //数据库参数
-import {page, deleteById, selectById, add} from "../../../../api/file.js";
+import { page, deleteById, selectById, add } from "../../../../api/file.js";
 
 const fileSearch = ref({
   name: "",
@@ -889,9 +770,9 @@ const initChart = () => {
         return `迭代次数: ${params[0].axisValue}<br/>值: ${params[0].data}`;
       },
     },
-    xAxis: {type: "category", name: "iters", data: iterations},
-    yAxis: {type: "value", name: "value"},
-    series: [{type: "line", data: values}],
+    xAxis: { type: "category", name: "iters", data: iterations },
+    yAxis: { type: "value", name: "value" },
+    series: [{ type: "line", data: values }],
   };
 
   myChart.setOption(option);
@@ -1096,13 +977,7 @@ const onSubmitParForm = () => {
 
 const handleDragEnd = (e, item) => {
   console.log(e, item); // 可以获取到最后拖动后松开鼠标时的坐标和拖动的节点相关信息
-  addHandleNode(
-    e.pageX - 360,
-    e.pageY - 160,
-    new Date().getTime(),
-    item.image,
-    item.name
-  );
+  addHandleNode(e.pageX - 360, e.pageY - 160, new Date().getTime(), item.image, item.name);
 };
 
 const nodeAddEvent = () => {
@@ -1123,7 +998,7 @@ const nodeAddEvent = () => {
   });
 
   // 连线绑定悬浮事件
-  graph.on("cell:mouseenter", ({cell}) => {
+  graph.on("cell:mouseenter", ({ cell }) => {
     if (cell.shape == "edge") {
       cell.addTools([
         {
@@ -1147,7 +1022,7 @@ const nodeAddEvent = () => {
     }
   });
 
-  graph.on("cell:dblclick", ({e, x, y, cell, view}) => {
+  graph.on("cell:dblclick", ({ e, x, y, cell, view }) => {
     if (cell.shape === "image") {
       if (cell.attrs.label.textWrap.text === "算法与参数配置模块") {
         showAlgForm.value = true;
@@ -1171,7 +1046,7 @@ const nodeAddEvent = () => {
     }
   });
 
-  graph.on("cell:mouseleave", ({cell}) => {
+  graph.on("cell:mouseleave", ({ cell }) => {
     if (cell.shape === "edge") {
       cell.removeTools();
       cell.setAttrs({
@@ -1184,7 +1059,7 @@ const nodeAddEvent = () => {
   });
 
   // 节点绑定点击事件
-  graph.on("node:click", ({e, x, y, node, view}) => {
+  graph.on("node:click", ({ e, x, y, node, view }) => {
     console.log("点击！！！", node);
     // 判断是否有选中过节点
     if (curSelectNode) {

@@ -6,19 +6,9 @@
         <div class="register-title">新特工业互联网系统平台</div>
       </div>
       <div class="register-form">
-        <el-form
-          :model="registerForm"
-          label-width="auto"
-          ref="registerRef"
-          :rules="rules"
-          style="max-width: 450px"
-        >
+        <el-form :model="registerForm" label-width="auto" ref="registerRef" :rules="rules" style="max-width: 450px">
           <el-form-item prop="username">
-            <el-input
-              v-model="registerForm.username"
-              placeholder="请输入用户名"
-              maxlength="8"
-            >
+            <el-input v-model="registerForm.username" placeholder="请输入用户名" maxlength="8">
               <template #prepend>
                 <el-icon>
                   <User />
@@ -43,18 +33,12 @@
             </el-input>
           </el-form-item>
           <el-form-item>
-            <el-button
-              type="primary"
-              @click="handleRegister(registerRef)"
-              class="register-btn"
-              size="large"
+            <el-button type="primary" @click="handleRegister(registerRef)" class="register-btn" size="large"
               >注册</el-button
             >
           </el-form-item>
           <p class="register-text">
-            已有账号，<el-link type="primary" @click="$router.push('/login')"
-              >立即登录</el-link
-            >
+            已有账号，<el-link type="primary" @click="$router.push('/login')">立即登录</el-link>
           </p>
         </el-form>
       </div>
@@ -63,10 +47,10 @@
 </template>
 
 <script setup>
-import {ref} from "vue";
-import {ElMessage} from "element-plus";
-import {register} from "../../../api/login.js";
-import {useRouter} from "vue-router";
+import { ref } from "vue";
+import { ElMessage } from "element-plus";
+import { register } from "../../../api/login.js";
+import { useRouter } from "vue-router";
 
 const router = useRouter();
 
@@ -79,12 +63,12 @@ const registerRef = ref(null);
 
 const rules = {
   jobnumber: [
-    {required: true, message: "请输入用户名", trigger: "blur"},
-    {min: 8, max: 8, message: "用户名长度为8位", trigger: "blur"},
+    { required: true, message: "请输入用户名", trigger: "blur" },
+    { min: 8, max: 8, message: "用户名长度为8位", trigger: "blur" },
   ],
   password: [
-    {required: true, message: "请输入密码", trigger: "blur"},
-    {min: 6, max: 16, message: "密码长度为6-16位", trigger: "blur"},
+    { required: true, message: "请输入密码", trigger: "blur" },
+    { min: 6, max: 16, message: "密码长度为6-16位", trigger: "blur" },
   ],
 };
 

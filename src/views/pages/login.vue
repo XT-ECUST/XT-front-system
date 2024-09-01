@@ -6,20 +6,9 @@
         <div class="login-title">新特工业互联网系统平台</div>
       </div>
       <div class="login-form">
-        <el-form
-          :model="user"
-          label-width="auto"
-          ref="userRef"
-          :rules="rules"
-          style="max-width: 450px"
-        >
+        <el-form :model="user" label-width="auto" ref="userRef" :rules="rules" style="max-width: 450px">
           <el-form-item prop="username">
-            <el-input
-              v-model="user.username"
-              placeholder="请输入用户名"
-              minlength="8"
-              maxlength="16"
-            >
+            <el-input v-model="user.username" placeholder="请输入用户名" minlength="8" maxlength="16">
               <template #prepend>
                 <el-icon>
                   <User />
@@ -44,25 +33,13 @@
             </el-input>
           </el-form-item>
           <div class="pwd-tips">
-            <el-checkbox
-              class="pwd-checkbox"
-              v-model="checked"
-              label="记住密码"
-            />
+            <el-checkbox class="pwd-checkbox" v-model="checked" label="记住密码" />
           </div>
           <el-form-item>
-            <el-button
-              type="primary"
-              @click="handleLogin(userRef)"
-              class="login-btn"
-              size="large"
-              >登录</el-button
-            >
+            <el-button type="primary" @click="handleLogin(userRef)" class="login-btn" size="large">登录</el-button>
           </el-form-item>
           <p class="login-text">
-            没有账号？<el-link type="primary" @click="$router.push('/register')"
-              >立即注册</el-link
-            >
+            没有账号？<el-link type="primary" @click="$router.push('/register')">立即注册</el-link>
           </p>
         </el-form>
       </div>
@@ -71,10 +48,10 @@
 </template>
 
 <script setup>
-import {ref} from "vue";
-import {ElMessage} from "element-plus";
-import {login} from "../../../api/login.js";
-import {useRouter} from "vue-router";
+import { ref } from "vue";
+import { ElMessage } from "element-plus";
+import { login } from "../../../api/login.js";
+import { useRouter } from "vue-router";
 
 const router = useRouter();
 
@@ -90,12 +67,12 @@ const userRef = ref(null);
 
 const rules = {
   username: [
-    {required: true, message: "请输入用户名", trigger: "blur"},
-    {min: 8, max: 16, message: "工号长度为8位", trigger: "blur"},
+    { required: true, message: "请输入用户名", trigger: "blur" },
+    { min: 8, max: 16, message: "工号长度为8位", trigger: "blur" },
   ],
   password: [
-    {required: true, message: "请输入密码", trigger: "blur"},
-    {min: 6, max: 16, message: "密码长度为6-16位", trigger: "blur"},
+    { required: true, message: "请输入密码", trigger: "blur" },
+    { min: 6, max: 16, message: "密码长度为6-16位", trigger: "blur" },
   ],
 };
 
