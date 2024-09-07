@@ -307,7 +307,7 @@
     </el-dialog>
     <!--问题选择表单-->
     <el-dialog v-model="showQueForm" width="600px">
-      <el-form :model="QueForm" label-width="auto">
+      <el-form :model="QueForm" label-width="auto" style="max-width: 500px">
         <el-form-item label="选择要优化的问题">
           <el-select v-model="QueForm.region" placeholder="请选择要优化的问题">
             <el-option label="Sphere函数" value="Sphere" />
@@ -425,7 +425,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang="js">
 import { Graph } from "@antv/x6";
 import { ref, reactive, onMounted } from "vue";
 import axios from "axios";
@@ -433,7 +433,6 @@ import * as echarts from "echarts";
 import { UploadFilled } from "@element-plus/icons-vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { Check, Delete, Edit, Message, Search, Star, Coin } from "@element-plus/icons-vue";
-import type { DrawerProps } from "element-plus";
 
 const percentage = ref(0);
 const cleanFilePath = ref("");
@@ -568,7 +567,7 @@ const showQueForm = ref(false);
 const showCleanDialog = ref(false);
 const loading = ref(false);
 const showDrawer = ref(false);
-const direction = ref<DrawerProps["direction"]>("rtl");
+const direction = ref("rtl");
 const show2database = ref(false);
 let curSelectNode = null;
 const algorithmType = ref("");
@@ -660,7 +659,7 @@ const handleSelectionChange = (val) => {
 };
 
 //根据id删除
-const deleFile = (id: number) => {
+const deleFile = (id) => {
   ElMessageBox.confirm("确认删除?", "提示", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
@@ -1256,7 +1255,10 @@ const addHandleNode = (x, y, id, image, name) => {
     },
     zIndex: 10,
   });
-  ElMessage.success("添加节点成功");
+  ElMessage.success({
+    message: "添加节点成功",
+    duration: 800,
+  });
 };
 
 const initGraph = () => {

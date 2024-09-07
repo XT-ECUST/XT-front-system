@@ -78,6 +78,8 @@ const handleRegister = (formEl) => {
       .then((response) => {
         if (response.data.code === 1) {
           ElMessage.success("注册成功，请登录");
+          localStorage.removeItem("user-param");
+          router.push("/login");
         } else {
           ElMessage.error(response.data.msg);
         }
