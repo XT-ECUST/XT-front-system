@@ -5,8 +5,13 @@
         <div>
           <h4>选择节点</h4>
         </div>
-        <div v-for="item in moduleList" :key="item.id" draggable="true" @dragend="handleDragEnd($event, item)"
-          class="nodeSelector">
+        <div
+          v-for="item in moduleList"
+          :key="item.id"
+          draggable="true"
+          @dragend="handleDragEnd($event, item)"
+          class="nodeSelector"
+        >
           <img :src="item.image" alt="" />
           <p>{{ item.name }}</p>
         </div>
@@ -14,16 +19,14 @@
       <div>
         <div class="canvas-menu">
           <el-tooltip effect="light" content="刷新画布" placement="top">
-            <el-button size="small" icon="Refresh" circle style="margin-left: 12px;" @click="handleClean" />
+            <el-button size="small" icon="Refresh" circle style="margin-left: 12px" @click="handleClean" />
           </el-tooltip>
           <el-tooltip effect="light" content="数据库" placement="top">
-            <el-button size="small" :icon="Coin" circle style="margin-left: 25px;" @click="showDrawer = true" />
+            <el-button size="small" :icon="Coin" circle style="margin-left: 25px" @click="showDrawer = true" />
           </el-tooltip>
-
         </div>
         <div class="canvas-card">
-          <div id="container" style="position: relative;">
-          </div>
+          <div id="container" style="position: relative"> </div>
         </div>
       </div>
     </div>
@@ -47,7 +50,7 @@
           <el-button type="danger" plain icon="Delete" @click="deleteByIds">批量删除</el-button>
         </div>
         <!-- 表格展示数据 -->
-        <el-table :data="fileData" style="width: 85%; margin:10px 0" border @selection-change="handleSelectionChange">
+        <el-table :data="fileData" style="width: 85%; margin: 10px 0" border @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="55" align="center"></el-table-column>
           <el-table-column fixed prop="id" label="序号" width="140" header-align="center" align="center">
             <template #default="{ $index }">
@@ -57,30 +60,43 @@
           <el-table-column prop="name" label="名称" width="250px" header-align="center" align="center" />
           <el-table-column label="上传时间" width="300px" header-align="center" align="center">
             <template #default="{ row }">
-              {{ row.createTime ? row.createTime.replace('T', ' ') : '' }}
+              {{ row.createTime ? row.createTime.replace("T", " ") : "" }}
             </template>
           </el-table-column>
           <el-table-column fixed="right" label="操作" width="250px" align="center">
             <template #default="{ row }">
               <el-button type="primary" size="small" plain icon="Download">
-                <a :href="row.path" style="text-decoration: none; color: inherit;">下载</a>
+                <a :href="row.path" style="text-decoration: none; color: inherit">下载</a>
               </el-button>
               <el-button type="danger" size="small" plain icon="delete" @click="deleFile(row.id)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
         <!-- 分页工具条 -->
-        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :background="background"
-          :current-page="currentPage" :page-sizes="[5, 10, 15, 20]" :page-size="pageSize"
-          layout="total, sizes, prev, pager, next, jumper" :total="totalCount"></el-pagination>
+        <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :background="background"
+          :current-page="currentPage"
+          :page-sizes="[5, 10, 15, 20]"
+          :page-size="pageSize"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="totalCount"
+        ></el-pagination>
         <!-- 上传文件对话框 -->
         <el-dialog v-model="showFileForm" title="上传文件" width="500px">
           <el-form :model="fileMeta" label-width="auto" style="max-width: 600px">
             <el-form-item label="文件名">
               <el-input v-model="fileMeta.name" placeholder="请输入文件名" />
             </el-form-item>
-            <el-upload class="upload-demo" drag action="http://localhost:8060/upload" multiple limit="1"
-              :on-success="dataDirectUpload">
+            <el-upload
+              class="upload-demo"
+              drag
+              action="http://localhost:8060/upload"
+              multiple
+              limit="1"
+              :on-success="dataDirectUpload"
+            >
               <el-icon class="el-icon--upload">
                 <UploadFilled />
               </el-icon>
@@ -98,8 +114,8 @@
       </div>
     </el-drawer>
     <!--算法选择表单-->
-    <el-dialog v-model="showAlgForm" width="600px">
-      <el-form :model="algForm" label-width="auto">
+    <el-dialog v-model="showAlgForm" width="500px" title="算法选择">
+      <el-form :model="algForm" label-width="auto" style="max-width: 400px">
         <el-form-item label="请选择算法">
           <el-select v-model="algForm.region" placeholder="请选择算法">
             <el-option label="差分进化算法" value="DE" />
@@ -115,7 +131,7 @@
           <!-- <el-button @click="showAlgForm = false">取消</el-button> -->
         </el-form-item>
       </el-form>
-      <el-form :model="parForm" label-width="auto">
+      <el-form :model="parForm" label-width="auto" style="max-width: 400px">
         <el-form-item v-if="algorithmType === 'FLY'" label="D">
           <el-input v-model="parForm.D" />
         </el-form-item>
@@ -291,7 +307,7 @@
     </el-dialog>
     <!--问题选择表单-->
     <el-dialog v-model="showQueForm" width="600px">
-      <el-form :model="QueForm" label-width="auto">
+      <el-form :model="QueForm" label-width="auto" style="max-width: 500px">
         <el-form-item label="选择要优化的问题">
           <el-select v-model="QueForm.region" placeholder="请选择要优化的问题">
             <el-option label="Sphere函数" value="Sphere" />
@@ -310,13 +326,13 @@
     </el-dialog>
     <!--结果显示模块-->
     <el-dialog v-model="showReDialog" title="实验结果：" width="600px">
-      <h4 style="text-align: center;">运行进度：</h4>
+      <h4 style="text-align: center">运行进度：</h4>
       <div class="demo-progress">
         <el-progress type="dashboard" :percentage="percentage" :color="colors" width="80" />
       </div>
       <!-- <span>{{ resultData }}</span> -->
-      <el-button @click="initChart" style="margin-left: 43%;">显示图表</el-button>
-      <div ref="chartContainer" style="width: 100%; height: 400px;"></div>
+      <el-button @click="initChart" style="margin-left: 43%">显示图表</el-button>
+      <div ref="chartContainer" style="width: 100%; height: 400px"></div>
       <template #footer>
         <div class="dialog-footer">
           <el-button type="primary" @click="showReDialog = false">确定</el-button>
@@ -325,28 +341,40 @@
     </el-dialog>
     <!--数据处理算法模块-->
     <el-dialog v-model="showCleanDialog" title="数据处理算法" width="600px">
-      <el-upload class="upload-demo" drag action="http://localhost:8060/localUpload" limit="1"
-        :on-success="handleUpload">
+      <el-upload
+        class="upload-demo"
+        drag
+        action="http://localhost:8060/localUpload"
+        limit="1"
+        :on-success="handleUpload"
+      >
         <el-icon class="el-icon--upload"><upload-filled /></el-icon>
-        <div class="el-upload__text">
-          Drop file here or <em>click to upload</em>
-        </div>
+        <div class="el-upload__text"> Drop file here or <em>click to upload</em> </div>
         <template #tip>
-          <div class="el-upload__tip">
-            请上传要处理的原始数据
-          </div>
+          <div class="el-upload__tip"> 请上传要处理的原始数据 </div>
         </template>
       </el-upload>
       <el-form :model="cleanForm" label-width="auto">
         <el-form-item label="请选择算法类型">
-          <el-cascader v-model="selectedAlgorithm" :options="algorithmOptions" @change="handleAlgorithmChange"
-            placeholder="请选择算法类型和具体算法" />
+          <el-cascader
+            v-model="selectedAlgorithm"
+            :options="algorithmOptions"
+            @change="handleAlgorithmChange"
+            placeholder="请选择算法类型和具体算法"
+          />
         </el-form-item>
 
         <!-- 根据选中的算法类型动态显示参数输入框 -->
         <el-form-item
-          v-if="selectedAlgorithm[1] === 'PCA' || selectedAlgorithm[1] === 'KPCA' || selectedAlgorithm[1] === 'LDA' || selectedAlgorithm[1] === 'LLE' || selectedAlgorithm[1] === 't-SNE'"
-          label="n_components">
+          v-if="
+            selectedAlgorithm[1] === 'PCA' ||
+            selectedAlgorithm[1] === 'KPCA' ||
+            selectedAlgorithm[1] === 'LDA' ||
+            selectedAlgorithm[1] === 'LLE' ||
+            selectedAlgorithm[1] === 't-SNE'
+          "
+          label="n_components"
+        >
           <el-input v-model="cleanForm.reduc.n_components" />
         </el-form-item>
         <el-form-item v-if="selectedAlgorithm[1] === 'LLE'" label="n_neighbors">
@@ -357,7 +385,7 @@
         </el-form-item>
         <el-form-item>
           <el-button type="primary" :loading="loading" @click="onsubmitcleanForm">
-            {{ loading ? 'Submitting ...' : '提交' }}
+            {{ loading ? "Submitting ..." : "提交" }}
           </el-button>
           <el-button @click="showCleanDialog = false">取消</el-button>
         </el-form-item>
@@ -367,183 +395,183 @@
     <!--文件下载模块-->
     <el-dialog v-model="showDownloadDialog" title="数据处理后文件下载" width="600px">
       <el-button type="primary" size="small" plain icon="Download">
-        <a :href="oss_url" style="text-decoration: none; color: inherit;">下载</a>
+        <a :href="oss_url" style="text-decoration: none; color: inherit">下载</a>
       </el-button>
-      <el-button type="primary" size="small" plain icon="Upload" @click="showDownloadDialog = false; show2database = true">
+      <el-button
+        type="primary"
+        size="small"
+        plain
+        icon="Upload"
+        @click="
+          showDownloadDialog = false;
+          show2database = true;
+        "
+      >
         上传至资源管理
       </el-button>
     </el-dialog>
     <!--数据处理后上传至资源管理对话框-->
     <el-dialog v-model="show2database" title="上传至资源管理" width="600px">
-          <el-form :model="fileMeta" label-width="auto" style="max-width: 600px">
-            <el-form-item label="文件名">
-              <el-input v-model="fileMeta.name" placeholder="请输入文件名" />
-            </el-form-item>
-            <el-form-item>
-              <el-button type="primary" @click="submitUpload">确定</el-button>
-              <el-button @click="show2database = false">取消</el-button>
-            </el-form-item>
-          </el-form>
+      <el-form :model="fileMeta" label-width="auto" style="max-width: 600px">
+        <el-form-item label="文件名">
+          <el-input v-model="fileMeta.name" placeholder="请输入文件名" />
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="submitUpload">确定</el-button>
+          <el-button @click="show2database = false">取消</el-button>
+        </el-form-item>
+      </el-form>
     </el-dialog>
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang="js">
 import { Graph } from "@antv/x6";
-import { ref, reactive, onMounted } from 'vue'
-import axios from 'axios';
-import * as echarts from 'echarts';
-import { UploadFilled } from '@element-plus/icons-vue'
-import { ElMessage, ElMessageBox } from 'element-plus';
-import {
-  Check,
-  Delete,
-  Edit,
-  Message,
-  Search,
-  Star,
-  Coin,
-} from '@element-plus/icons-vue'
-import type { DrawerProps } from 'element-plus'
+import { ref, reactive, onMounted } from "vue";
+import axios from "axios";
+import * as echarts from "echarts";
+import { UploadFilled } from "@element-plus/icons-vue";
+import { ElMessage, ElMessageBox } from "element-plus";
+import { Check, Delete, Edit, Message, Search, Star, Coin } from "@element-plus/icons-vue";
 
 const percentage = ref(0);
-const cleanFilePath = ref('');
-const oss_url = ref('');
+const cleanFilePath = ref("");
+const oss_url = ref("");
 const colors = [
-  { color: '#f56c6c', percentage: 20 },
-  { color: '#e6a23c', percentage: 40 },
-  { color: '#5cb87a', percentage: 60 },
-  { color: '#1989fa', percentage: 80 },
-  { color: '#6f7ad3', percentage: 100 },
+  { color: "#f56c6c", percentage: 20 },
+  { color: "#e6a23c", percentage: 40 },
+  { color: "#5cb87a", percentage: 60 },
+  { color: "#1989fa", percentage: 80 },
+  { color: "#6f7ad3", percentage: 100 },
 ];
 
 const QueForm = reactive({
-  region: '',
+  region: "",
 });
 const algForm = reactive({
-  region: '',
+  region: "",
 });
 const modelForm = reactive({
-  region: '',
+  region: "",
 });
 const cleanForm = reactive({
   reduc: {
-    n_components: '',
-    n_neighbors: '',
-    perplexity: '',
-  }
+    n_components: "",
+    n_neighbors: "",
+    perplexity: "",
+  },
 });
 const selectedAlgorithm = ref([]);
 const algorithmOptions = [
   {
-    value: 'dimensionality_reduction',
-    label: '数据降维算法',
+    value: "dimensionality_reduction",
+    label: "数据降维算法",
     children: [
-      { value: 'PCA', label: 'PCA' },
-      { value: 'KPCA', label: 'KPCA' },
-      { value: 'LDA', label: 'LDA' },
-      { value: 'LLE', label: 'LLE' },
-      { value: 't-SNE', label: 't-SNE' },
+      { value: "PCA", label: "PCA" },
+      { value: "KPCA", label: "KPCA" },
+      { value: "LDA", label: "LDA" },
+      { value: "LLE", label: "LLE" },
+      { value: "t-SNE", label: "t-SNE" },
     ],
   },
   {
-    value: 'data_cleaning',
-    label: '数据清洗算法',
+    value: "data_cleaning",
+    label: "数据清洗算法",
     children: [
-      { value: 'Z-Score', label: 'Z-Score' },
-      { value: 'Min-Max', label: 'Min-Max' },
-      { value: 'IQR', label: 'IQR' },
-      { value: 'MEAN', label: 'MEAN' },
-      { value: 'MEDIAN', label: 'MEDIAN' },
-      { value: 'MODE', label: 'MODE' },
-      { value: '3sigma', label: '3sigma' },
+      { value: "Z-Score", label: "Z-Score" },
+      { value: "Min-Max", label: "Min-Max" },
+      { value: "IQR", label: "IQR" },
+      { value: "MEAN", label: "MEAN" },
+      { value: "MEDIAN", label: "MEDIAN" },
+      { value: "MODE", label: "MODE" },
+      { value: "3sigma", label: "3sigma" },
     ],
   },
   {
-    value: 'data_convert',
-    label: '数据转换算法',
+    value: "data_convert",
+    label: "数据转换算法",
     children: [
-      { value: 'Standard', label: 'Standard' },
-      { value: 'Norm', label: 'Norm' },
-      { value: 'One-Hot', label: 'One-Hot' },
+      { value: "Standard", label: "Standard" },
+      { value: "Norm", label: "Norm" },
+      { value: "One-Hot", label: "One-Hot" },
     ],
   },
-]
+];
 
 const parForm = reactive({
   //萤火虫算法参数(FLY)
-  D: '',
-  N: '',
-  Beta0: '',
-  gama_FLY: '',
-  alpha_FLY: '',
-  T: '',
-  bound: '',
+  D: "",
+  N: "",
+  Beta0: "",
+  gama_FLY: "",
+  alpha_FLY: "",
+  T: "",
+  bound: "",
   //粒子群算法参数(PSO)
-  size: '',
-  iter_num: '',
-  min_values: '',
-  max_values: '',
-  w: '',
-  c1: '',
-  c2: '',
-  dimension: '',
+  size: "",
+  iter_num: "",
+  min_values: "",
+  max_values: "",
+  w: "",
+  c1: "",
+  c2: "",
+  dimension: "",
   //差分进化算法参数(DE)
-  bounds: '',
-  dimensions: '',
-  population_size: '',
-  max_generations: '',
-  crossover_rate_DE: '',
-  differential_weight: '',
+  bounds: "",
+  dimensions: "",
+  population_size: "",
+  max_generations: "",
+  crossover_rate_DE: "",
+  differential_weight: "",
   //蚁群算法参数(ASA)
-  num_dimensions: '',
-  num_ants: '',
-  num_iterations: '',
-  alpha_ACA: '',
-  beta_ACA: '',
-  rho: '',
-  interval: '',
+  num_dimensions: "",
+  num_ants: "",
+  num_iterations: "",
+  alpha_ACA: "",
+  beta_ACA: "",
+  rho: "",
+  interval: "",
   //模拟退火算法参数：(SA)
-  initial_solution: '',
-  bounds_SA: '',
-  dimensions_SA: '',
-  initial_temperature: '',
-  cooling_rate: '',
-  max_iterations: '',
+  initial_solution: "",
+  bounds_SA: "",
+  dimensions_SA: "",
+  initial_temperature: "",
+  cooling_rate: "",
+  max_iterations: "",
   //遗传算法(GA)
-  dna_size: '',
-  pop_size: '',
-  crossover_rate_GA: '',
-  mutation_rate: '',
-  n_generations: '',
-  x_bound: '',
-  y_bound: '',
+  dna_size: "",
+  pop_size: "",
+  crossover_rate_GA: "",
+  mutation_rate: "",
+  n_generations: "",
+  x_bound: "",
+  y_bound: "",
   //鲸鱼优化算法(WOA)
-  bounds_WOA: '',
-  dimensions_WOA: '',
-  whales_size: '',
-  maxIterations_WOA: '',
-  a_decrease: '',
+  bounds_WOA: "",
+  dimensions_WOA: "",
+  whales_size: "",
+  maxIterations_WOA: "",
+  a_decrease: "",
   //北方苍鹰优化算法
-  bounds_NOGO: '',
-  dimensions_NOGO: '',
-  eagle_size: '',
-  maxIterations_NOGO: ''
-})
-const showDownloadDialog = ref(false)
+  bounds_NOGO: "",
+  dimensions_NOGO: "",
+  eagle_size: "",
+  maxIterations_NOGO: "",
+});
+const showDownloadDialog = ref(false);
 const showAlgForm = ref(false);
 const showParForm = ref(false);
 const showModForm = ref(false);
 const showReDialog = ref(false);
 const showQueForm = ref(false);
 const showCleanDialog = ref(false);
-const loading = ref(false)
+const loading = ref(false);
 const showDrawer = ref(false);
-const direction = ref<DrawerProps['direction']>('rtl')
+const direction = ref("rtl");
 const show2database = ref(false);
 let curSelectNode = null;
-const algorithmType = ref('');
-const testFunction = ref('');
+const algorithmType = ref("");
+const testFunction = ref("");
 const resultData = ref([]);
 const iteration_records = ref([]);
 const chartContainer = ref(null);
@@ -551,29 +579,28 @@ const moduleList = [
   {
     id: 1,
     name: "优化问题选择模块",
-    image: 'https://cdn.pixabay.com/photo/2016/10/08/18/35/help-1724292_640.png'
+    image: "https://cdn.pixabay.com/photo/2016/10/08/18/35/help-1724292_640.png",
   },
   {
     id: 2,
     name: "算法与参数配置模块",
-    image: 'https://cdn.pixabay.com/photo/2023/04/19/19/26/cpu-7938434_1280.png'
+    image: "https://cdn.pixabay.com/photo/2023/04/19/19/26/cpu-7938434_1280.png",
   },
   {
     id: 3,
     name: "优化模型模块",
-    image: 'https://cdn.pixabay.com/photo/2020/11/07/10/25/machine-learning-5720531_1280.png'
+    image: "https://cdn.pixabay.com/photo/2020/11/07/10/25/machine-learning-5720531_1280.png",
   },
   {
     id: 4,
     name: "结果显示模块",
-    image: 'https://cdn.pixabay.com/photo/2017/03/08/14/20/flat-2126880_1280.png'
+    image: "https://cdn.pixabay.com/photo/2017/03/08/14/20/flat-2126880_1280.png",
   },
   {
     id: 5,
     name: "数据处理算法模块",
-    image: 'https://cdn.pixabay.com/photo/2019/12/31/18/53/chart-4732546_640.png'
+    image: "https://cdn.pixabay.com/photo/2019/12/31/18/53/chart-4732546_640.png",
   },
-
 ];
 
 let graph = null;
@@ -582,13 +609,13 @@ let graph = null;
 import { page, deleteById, selectById, add } from "../../../../api/file.js";
 
 const fileSearch = ref({
-  name: ''
+  name: "",
 });
 
 const fileMeta = ref({
   id: null,
-  name: '',
-  path: ''
+  name: "",
+  path: "",
 });
 
 const fileData = ref([]);
@@ -622,7 +649,7 @@ const onsubmitSearch = () => {
 
 // 清空查询条件
 const resetFind = () => {
-  fileSearch.value.name = '';
+  fileSearch.value.name = "";
   searchfile();
 };
 
@@ -632,7 +659,7 @@ const handleSelectionChange = (val) => {
 };
 
 //根据id删除
-const deleFile = (id: number) => {
+const deleFile = (id) => {
   ElMessageBox.confirm("确认删除?", "提示", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
@@ -650,34 +677,31 @@ const deleFile = (id: number) => {
     .catch(() => {
       ElMessage.info("已取消删除");
     });
-}
+};
 
 //上传成功函数
 const dataDirectUpload = (res) => {
-  if (res && res.url) { // 通过 res.filepath 访问后端返回的路径
+  if (res && res.url) {
+    // 通过 res.filepath 访问后端返回的路径
     oss_url.value = res.url;
     fileMeta.value.path = res.url;
     console.log(oss_url.value);
   } else {
-    console.error('Invalid response format from server:', res);
+    console.error("Invalid response format from server:", res);
   }
-}
+};
 
 //批量删除函数
 const deleteByIds = () => {
-  ElMessageBox.confirm(
-    "此操作将删除该数据, 是否继续?",
-    "提示",
-    {
-      confirmButtonText: "确定",
-      cancelButtonText: "取消",
-      type: "warning",
-    }
-  )
+  ElMessageBox.confirm("此操作将删除该数据, 是否继续?", "提示", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    type: "warning",
+  })
     .then(() => {
       // 点击确认按钮
       // 1. 创建id数组, 从 multipleSelection 获取即可
-      selectedIds.value = multipleSelection.value.map(item => item.id);
+      selectedIds.value = multipleSelection.value.map((item) => item.id);
 
       // 2. 发送AJAX请求
       deleteById(selectedIds.value).then((resp) => {
@@ -707,8 +731,8 @@ const handleCurrentChange = (val) => {
 };
 
 const handleUploadFile = () => {
-  fileMeta.value.name = '';
-  fileMeta.value.path = '';
+  fileMeta.value.name = "";
+  fileMeta.value.path = "";
   showFileForm.value = true;
 };
 
@@ -726,8 +750,8 @@ const submitUpload = async () => {
 //数据库相关参数ending
 
 const initChart = () => {
-  const iterations = iteration_records.value.map(item => item[0]);
-  const values = iteration_records.value.map(item => item[1]);
+  const iterations = iteration_records.value.map((item) => item[0]);
+  const values = iteration_records.value.map((item) => item[1]);
 
   const container = chartContainer.value;
   if (!container) {
@@ -739,52 +763,56 @@ const initChart = () => {
 
   const option = {
     tooltip: {
-      trigger: 'axis',
+      trigger: "axis",
 
       formatter: function (params) {
         return `迭代次数: ${params[0].axisValue}<br/>值: ${params[0].data}`;
-      }
+      },
     },
-    xAxis: { type: 'category', name: 'iters', data: iterations },
-    yAxis: { type: 'value', name: 'value' },
-    series: [{ type: 'line', data: values }]
+    xAxis: { type: "category", name: "iters", data: iterations },
+    yAxis: { type: "value", name: "value" },
+    series: [{ type: "line", data: values }],
   };
 
   myChart.setOption(option);
 };
 
 const handleUpload = (res) => {
-  if (res && res.filepath) { // 通过 res.filepath 访问后端返回的路径
+  if (res && res.filepath) {
+    // 通过 res.filepath 访问后端返回的路径
     cleanFilePath.value = res.filepath;
     console.log(cleanFilePath.value);
   } else {
-    console.error('Invalid response format from server:', res);
+    console.error("Invalid response format from server:", res);
   }
 };
 const handleClean = () => {
   graph.clearCells();
-  ElMessage.success("刷新画布成功")
-}
+  ElMessage.success("刷新画布成功");
+};
 
 const handleAlgorithmChange = (selectedAlgorithm) => {
   console.log(selectedAlgorithm);
-
-}
+};
 
 const onsubmitcleanForm = () => {
   loading.value = true;
   let parameters = {};
 
-  if (selectedAlgorithm.value[1] === 'PCA' || selectedAlgorithm.value[1] === 'KPCA' || selectedAlgorithm.value[1] === 'LDA') {
+  if (
+    selectedAlgorithm.value[1] === "PCA" ||
+    selectedAlgorithm.value[1] === "KPCA" ||
+    selectedAlgorithm.value[1] === "LDA"
+  ) {
     parameters = {
       n_components: parseInt(cleanForm.reduc.n_components),
     };
-  } else if (selectedAlgorithm.value[1] === 'LLE') {
+  } else if (selectedAlgorithm.value[1] === "LLE") {
     parameters = {
       n_components: parseInt(cleanForm.reduc.n_components),
       n_neighbors: parseInt(cleanForm.reduc.n_neighbors),
     };
-  } else if (selectedAlgorithm.value[1] === 't-SNE') {
+  } else if (selectedAlgorithm.value[1] === "t-SNE") {
     parameters = {
       n_components: parseInt(cleanForm.reduc.n_components),
       perplexity: parseInt(cleanForm.reduc.perplexity),
@@ -798,55 +826,53 @@ const onsubmitcleanForm = () => {
   };
 
   // 发送POST请求到后端
-  axios.post('http://localhost:8060/cleanData', data)
-    .then(response => {
+  axios
+    .post("http://localhost:8060/cleanData", data)
+    .then((response) => {
       console.log(response.data.result);
       // 处理后端返回的结果
-      oss_url.value = response.data.result.oss_url
+      oss_url.value = response.data.result.oss_url;
       console.log(oss_url);
       fileMeta.value.path = oss_url.value;
       loading.value = false;
       showCleanDialog.value = false;
       showDownloadDialog.value = true;
       ElMessage.success("数据处理成功");
-
     })
-    .catch(error => {
-      console.error('Error:', error);
-      ElMessage.error(error)
+    .catch((error) => {
+      console.error("Error:", error);
+      ElMessage.error(error);
       showCleanDialog.value = false;
       loading.value = false;
       // 处理请求失败的情况
     });
-
-}
+};
 
 const onSubmitQueForm = () => {
-  console.log('submit--Que!')
+  console.log("submit--Que!");
   showQueForm.value = false;
   testFunction.value = QueForm.region;
 };
 
-
 const onSubmitAlgForm = () => {
-  console.log('submit--Alg!')
-  algorithmType.value = algForm.region
+  console.log("submit--Alg!");
+  algorithmType.value = algForm.region;
 };
 
 const onSubmitModForm = () => {
-  console.log('submit!')
+  console.log("submit!");
   showModForm.value = false;
 };
 
 const onSubmitParForm = () => {
-  console.log('submit!');
+  console.log("submit!");
   showParForm.value = false;
   showAlgForm.value = false;
 
   // 根据算法类型从表单中提取相应的参数
   let parameters = {};
 
-  if (algorithmType.value === 'FLY') {
+  if (algorithmType.value === "FLY") {
     parameters = {
       D: parseInt(parForm.D),
       N: parseInt(parForm.N),
@@ -856,7 +882,7 @@ const onSubmitParForm = () => {
       T: parseInt(parForm.T),
       bound: JSON.parse(parForm.bound), // 解析字符串为数组
     };
-  } else if (algorithmType.value === 'PSO') {
+  } else if (algorithmType.value === "PSO") {
     parameters = {
       size: parseInt(parForm.size),
       iter_num: parseInt(parForm.iter_num),
@@ -867,7 +893,7 @@ const onSubmitParForm = () => {
       c2: parseFloat(parForm.c2),
       dimension: parseInt(parForm.dimension),
     };
-  } else if (algorithmType.value === 'DE') {
+  } else if (algorithmType.value === "DE") {
     parameters = {
       bounds: JSON.parse(parForm.bounds), // 解析字符串为数组
       dimensions: parseInt(parForm.dimensions),
@@ -876,7 +902,7 @@ const onSubmitParForm = () => {
       crossover_rate: parseFloat(parForm.crossover_rate_DE),
       differential_weight: parseFloat(parForm.differential_weight),
     };
-  } else if (algorithmType.value === 'ACA') {
+  } else if (algorithmType.value === "ACA") {
     parameters = {
       num_dimensions: parseInt(parForm.num_dimensions), // 解析字符串为数组
       num_ants: parseInt(parForm.num_ants),
@@ -886,16 +912,16 @@ const onSubmitParForm = () => {
       rho: parseFloat(parForm.rho),
       interval: JSON.parse(parForm.interval),
     };
-  } else if (algorithmType.value === 'SA') {
+  } else if (algorithmType.value === "SA") {
     parameters = {
       initial_solution: JSON.parse(parForm.initial_solution), // 解析字符串为数组
       bounds: JSON.parse(parForm.bounds_SA),
       dimensions: parseInt(parForm.dimensions_SA),
       initial_temperature: parseInt(parForm.initial_temperature),
       cooling_rate: parseFloat(parForm.cooling_rate),
-      max_iterations: parseInt(parForm.max_iterations)
+      max_iterations: parseInt(parForm.max_iterations),
     };
-  } else if (algorithmType.value === 'GA') {
+  } else if (algorithmType.value === "GA") {
     parameters = {
       dna_size: parseInt(parForm.dna_size),
       pop_size: parseInt(parForm.pop_size),
@@ -905,7 +931,7 @@ const onSubmitParForm = () => {
       x_bound: JSON.parse(parForm.x_bound),
       y_bound: JSON.parse(parForm.y_bound),
     };
-  } else if (algorithmType.value === 'WOA') {
+  } else if (algorithmType.value === "WOA") {
     parameters = {
       bounds: JSON.parse(parForm.bounds_WOA),
       dimensions: parseInt(parForm.dimensions_WOA),
@@ -913,7 +939,7 @@ const onSubmitParForm = () => {
       max_genarations: parseInt(parForm.maxIterations_WOA),
       a_decrease: parseInt(parForm.a_decrease),
     };
-  } else if (algorithmType.value === 'NOGO') {
+  } else if (algorithmType.value === "NOGO") {
     parameters = {
       bounds: JSON.parse(parForm.bounds_NOGO),
       dimensions: parseInt(parForm.dimensions_NOGO),
@@ -930,34 +956,27 @@ const onSubmitParForm = () => {
   };
 
   // 发送POST请求到后端
-  axios.post('http://localhost:8060/calculate', data)
-    .then(response => {
+  axios
+    .post("http://localhost:8060/calculate", data)
+    .then((response) => {
       ElMessage.success("算法运算成功");
       console.log(response.data.result);
       // 处理后端返回的结果
       resultData.value = response.data.result; // 更新 resultData 变量
-      iteration_records.value = resultData.value['iteration_records']
+      iteration_records.value = resultData.value["iteration_records"];
       console.log(iteration_records.value);
       percentage.value = 100;
-
     })
-    .catch(error => {
-      console.error('Error:', error);
-      ElMessage.error(error)
+    .catch((error) => {
+      console.error("Error:", error);
+      ElMessage.error(error);
       // 处理请求失败的情况
     });
 };
 
-
 const handleDragEnd = (e, item) => {
   console.log(e, item); // 可以获取到最后拖动后松开鼠标时的坐标和拖动的节点相关信息
-  addHandleNode(
-    e.pageX - 390,
-    e.pageY - 140,
-    new Date().getTime(),
-    item.image,
-    item.name
-  );
+  addHandleNode(e.pageX - 360, e.pageY - 160, new Date().getTime(), item.image, item.name);
 };
 
 const nodeAddEvent = () => {
@@ -1002,21 +1021,17 @@ const nodeAddEvent = () => {
     }
   });
 
-  graph.on('cell:dblclick', ({ e, x, y, cell, view }) => {
-    if (cell.shape === 'image') {
-      if (cell.attrs.label.textWrap.text === '算法与参数配置模块') {
+  graph.on("cell:dblclick", ({ e, x, y, cell, view }) => {
+    if (cell.shape === "image") {
+      if (cell.attrs.label.textWrap.text === "算法与参数配置模块") {
         showAlgForm.value = true;
-
-      } else if (cell.attrs.label.textWrap.text === '优化模型模块') {
+      } else if (cell.attrs.label.textWrap.text === "优化模型模块") {
         showModForm.value = true;
-
-      } else if (cell.attrs.label.textWrap.text === '结果显示模块') {
+      } else if (cell.attrs.label.textWrap.text === "结果显示模块") {
         showReDialog.value = true;
-
-      } else if (cell.attrs.label.textWrap.text === '优化问题选择模块') {
+      } else if (cell.attrs.label.textWrap.text === "优化问题选择模块") {
         showQueForm.value = true;
-
-      } else if (cell.attrs.label.textWrap.text === '数据处理算法模块') {
+      } else if (cell.attrs.label.textWrap.text === "数据处理算法模块") {
         showCleanDialog.value = true;
       } else {
         // 其他节点类型，隐藏所有表单
@@ -1113,7 +1128,7 @@ const nodeAddEvent = () => {
 const addHandleNode = (x, y, id, image, name) => {
   graph.addNode({
     id: id,
-    shape: 'image', // 指定使用何种图形，默认值为 'rect'
+    shape: "image", // 指定使用何种图形，默认值为 'rect'
     x: x,
     y: y,
     width: 60,
@@ -1143,41 +1158,41 @@ const addHandleNode = (x, y, id, image, name) => {
     ports: {
       groups: {
         top: {
-          position: 'top',
+          position: "top",
           attrs: {
             circle: {
               magnet: true,
-              stroke: '#8f8f8f',
+              stroke: "#8f8f8f",
               r: 5,
             },
           },
         },
         bottom: {
-          position: 'bottom',
+          position: "bottom",
           attrs: {
             circle: {
               magnet: true,
-              stroke: '#8f8f8f',
+              stroke: "#8f8f8f",
               r: 5,
             },
           },
         },
         left: {
-          position: 'left',
+          position: "left",
           attrs: {
             circle: {
               magnet: true,
-              stroke: '#8f8f8f',
+              stroke: "#8f8f8f",
               r: 5,
             },
           },
         },
         right: {
-          position: 'right',
+          position: "right",
           attrs: {
             circle: {
               magnet: true,
-              stroke: '#8f8f8f',
+              stroke: "#8f8f8f",
               r: 5,
             },
           },
@@ -1240,7 +1255,10 @@ const addHandleNode = (x, y, id, image, name) => {
     },
     zIndex: 10,
   });
-  ElMessage.success("添加节点成功");
+  ElMessage.success({
+    message: "添加节点成功",
+    duration: 800,
+  });
 };
 
 const initGraph = () => {
@@ -1296,12 +1314,12 @@ const initGraph = () => {
       maxScale: 3,
     },
     grid: {
-      type: 'mesh',
-      size: 20,      // 网格大小 10px
+      type: "mesh",
+      size: 20, // 网格大小 10px
       visible: true, // 渲染网格背景
       args: {
-        color: '#eeeeee', // 网格线/点颜色
-        thickness: 2,     // 网格线宽度/网格点大小
+        color: "#eeeeee", // 网格线/点颜色
+        thickness: 2, // 网格线宽度/网格点大小
       },
     },
   });
@@ -1327,7 +1345,7 @@ const save = () => {
   background-color: #fff;
   margin-bottom: 10px;
   border: 1px solid #ddd;
-  border-radius: 5px
+  border-radius: 5px;
 }
 
 .el-dialog {
@@ -1351,7 +1369,6 @@ const save = () => {
 
 .nodeSelector {
   border-bottom: 1px dashed black;
-
 }
 
 .dashboard-container {
@@ -1372,7 +1389,7 @@ const save = () => {
       align-content: flex-start;
       flex-wrap: wrap;
 
-      >div {
+      > div {
         margin-bottom: 10px;
         border-radius: 5px;
         padding: 0 10px;
@@ -1403,7 +1420,7 @@ const save = () => {
       height: 800px;
       box-sizing: border-box;
 
-      >div {
+      > div {
         display: flex;
         width: 1200px;
         height: 700px;

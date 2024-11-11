@@ -1,4 +1,4 @@
-import request from './request'
+import request from '../src/utils/request'
 
 export function page(name, page, pageSize) {
     return request({
