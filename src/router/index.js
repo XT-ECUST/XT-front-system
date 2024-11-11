@@ -36,6 +36,11 @@ const routes = [
             component: () => import("../views/Main/exp/ResultAna.vue"),
             meta: { title: "结果分析", icon: "Histogram" },
           },
+          {
+            path: "/exp/QA",
+            component: () => import("../views/Main/exp/QA.vue"),
+            meta: { title: "SiGPT", icon: "Monitor" },
+          },
 
         ],
       },
@@ -101,7 +106,7 @@ const router = createRouter({
 
 // 添加全局前置守卫
 router.beforeEach((to, from, next) => {
-  // 假设除了登录页面都需要登录
+  // 除了登录页面都需要登录
   if (to.path === "/login" || to.path === "/register") {
     next();
   }else if(!sessionStorage.getItem('token')){

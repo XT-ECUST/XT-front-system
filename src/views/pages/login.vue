@@ -110,7 +110,7 @@ const handleLogin = (formEl) => {
   align-items: center;
   width: 100%;
   height: 100vh;
-  background: url(../../assets/images/login-bg.jpg) center/cover no-repeat;
+  background: url(../../assets/images/bk2.jpg) center/cover no-repeat;
 }
 
 .login-box {
