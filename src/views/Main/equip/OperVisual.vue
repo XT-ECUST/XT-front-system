@@ -44,6 +44,17 @@
         </div>
         <div class="chart-box">
           <div class="chart-title">设备运行数据</div>
+          <!-- 设备选择下拉框 -->
+          <div class="device-select-container">
+            <el-select
+              v-model="selectedDeviceId"
+              placeholder="选择设备"
+              @change="LoadOperationData(selectedDeviceId)"
+              class="custom-select"
+            >
+              <el-option v-for="device in deviceList" :key="device.value" :label="device.label" :value="device.value" />
+            </el-select>
+          </div>
           <div id="equipmentParamsChart" class="chart"></div>
         </div>
       </div>
@@ -108,8 +119,6 @@ const devicesTypeData = ref({
   otherDevices: 0,
 });
 
-const realTimeArray = ref([]);
-
 // WebSocket connection
 let socket;
 
@@ -130,7 +139,6 @@ const initWebSocket = () => {
     realTimeData.value.powerConsumption = data.powerConsumption;
     realTimeData.value.timestamp = data.timestamp;
   };
-  realTimeArray.value = ref([]);
 
   socket.onclose = () => {
     console.log("WebSocket connection closed");
@@ -144,6 +152,9 @@ let runningTimeChart = null;
 let energyChart = null;
 let faultTypeChart = null;
 let realTimeChart = null;
+
+const selectedDeviceId = ref("");
+const deviceList = ref([]);
 
 // 初始化设备状态分布图表
 const initDeviceStatusChart = (data) => {
@@ -348,7 +359,7 @@ const initFaultTypeChart = () => {
   });
 };
 
-// 初始化关键设备参数监控图表
+// 初始化设备运行数据监控图表
 const initEquipmentParamsChart = (
   runningTimeData,
   temperatureData,
@@ -367,13 +378,14 @@ const initEquipmentParamsChart = (
     },
     xAxis: {
       type: "category",
+      name: "时间:h",
       data: runningTimeData,
       axisLabel: { color: "#fff" },
     },
     yAxis: [
       {
         type: "value",
-        name: "值",
+        name: "value",
         axisLabel: { color: "#fff" },
       },
     ],
@@ -410,6 +422,7 @@ const loadStatusData = async () => {
   const response = await page(deviceSearch.deviceName, deviceSearch.deviceType, 1, 100);
   if (response.data.code === 1) {
     const devices = response.data.data.rows;
+    deviceList.value = getDeviceList(devices);
     console.log("设备列表", devices);
     devicesCountData.value.totalCount = response.data.data.total;
     devices.forEach((device) => {
@@ -447,8 +460,18 @@ const loadStatusData = async () => {
     console.log("读取状态列表和初始化图标失败", result.data.msg);
   }
 };
+const getDeviceList = (deviceData) => {
+  let deviceList = deviceData.map((item) => {
+    return {
+      label: item.deviceName,
+      value: item.deviceId,
+    };
+  });
+  console.log("设备列表", deviceList);
+  return deviceList;
+};
 
-const LoadOperationData = async (id) => {
+const LoadOperationData = async (id = 1) => {
   const response = await selectByDeviceId(id);
   if (response.data.code === 1) {
     const operationData = response.data.data;
@@ -492,7 +515,7 @@ const handleResize = () => {
   faultTypeChart?.resize();
 };
 
-onMounted(() => {
+onMounted(async () => {
   // 初始化时间显示
   updateTime();
   timer = setInterval(updateTime, 1000);
@@ -571,7 +594,7 @@ onUnmounted(() => {
   .content {
     display: flex;
     justify-content: space-between;
-    align-items: space-between;
+    align-items: flex-start;
     height: calc(90% - 65px);
     margin-top: 15px;
     gap: 15px;
@@ -638,5 +661,17 @@ onUnmounted(() => {
 .real-time-data {
   margin-top: 20px;
   color: #fff;
+}
+
+.device-select-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.custom-select {
+  background-color: #030d27;
+  width: 220px;
+  color: #ffffff;
 }
 </style>
