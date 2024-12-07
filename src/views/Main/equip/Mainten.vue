@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard-container">
     <div class="header">
-      <div class="title">报警管理</div>
+      <div class="title">报警监控大屏</div>
       <div class="time">{{ currentTime }}</div>
     </div>
 
@@ -20,7 +20,7 @@
 
       <!-- 中间面板 -->
       <div class="center-panel">
-        <div class="data-overview"> </div>
+        <div class="data-overview"></div>
       </div>
 
       <!-- 右侧面板 -->
@@ -77,51 +77,13 @@ const initWebSocket = () => {
   socket = new WebSocket("ws://localhost:8080/websocket/monitoring-data/2");
 
   socket.onmessage = (event) => {
-    const data = JSON.parse(event.data);
-    realTimeData.value.vibration = data.vibration;
-    realTimeData.value.temperature = data.temperature;
-    realTimeData.value.pressure = data.pressure;
-    realTimeData.value.hydrogenConcentration = data.hydrogenConcentration;
-    realTimeData.value.powerConsumption = data.powerConsumption;
-    realTimeData.value.timestamp = data.timestamp;
-
-    // 更新图表
-    if (vibrationChart) {
-      vibrationChart.setOption({
-        series: [
-          {
-            data: [{ value: realTimeData.value.vibration, name: "振动" }],
-          },
-        ],
-      });
-    }
-    if (temperatureChart) {
-      temperatureChart.setOption({
-        series: [
-          {
-            data: [{ value: realTimeData.value.temperature, name: "温度" }],
-          },
-        ],
-      });
-    }
-    if (pressureChart) {
-      pressureChart.setOption({
-        series: [
-          {
-            data: [{ value: realTimeData.value.pressure, name: "压力" }],
-          },
-        ],
-      });
-    }
-    if (powerConsumptionChart) {
-      powerConsumptionChart.setOption({
-        series: [
-          {
-            data: [{ value: realTimeData.value.powerConsumption, name: "能耗" }],
-          },
-        ],
-      });
-    }
+    realTimeData.value = JSON.parse(event.data);
+    initRealTimeDataChart(
+      realTimeData.value.vibration,
+      realTimeData.value.temperature,
+      realTimeData.value.pressure,
+      realTimeData.value.powerConsumption
+    );
   };
 
   realTimeArray.value = ref([]);
@@ -140,9 +102,7 @@ const initWebSocket = () => {
 };
 
 // 图表实例
-
-// 初始化实时数据仪表盘
-const initRealTimeDataChart = () => {
+const initRealTimeDataChart = (vibration = 0, temperature = 0, pressure = 0, powerConsumption = 0) => {
   // 振动仪表盘
   vibrationChart = echarts.init(document.getElementById("vibrationChart"));
   vibrationChart.setOption({
@@ -154,15 +114,46 @@ const initRealTimeDataChart = () => {
         name: "振动",
         type: "gauge",
         detail: { formatter: "{value} V" },
-        data: [{ value: realTimeData.value.vibration, name: "振动" }],
+        min: 0,
+        max: 1,
+        data: [{ value: vibration, name: "振动" }],
         axisLine: {
           lineStyle: {
             width: 10,
             color: [
-              [0.2, "#67C23A"],
-              [0.8, "#E6A23C"],
-              [1, "#F56C6C"],
+              [0.1, "#67C23A"],
+              [0.9, "#2528cd"],
+              [1, "#995218"],
             ],
+          },
+        },
+        title: {
+          show: true,
+          offsetCenter: [0, "70%"], // x, y
+          textStyle: {
+            fontSize: 20,
+            color: "#fff", // 标题颜色
+          },
+        },
+        detail: {
+          formatter: "{value} V",
+          textStyle: {
+            fontSize: 30,
+            color: "#fff", // 数值颜色
+          },
+        },
+        splitLine: {
+          show: true,
+          lineStyle: {
+            color: "#fff", // 刻度线颜色
+            width: 2,
+          },
+        },
+        axisTick: {
+          show: true,
+          lineStyle: {
+            color: "#fff", // 刻度线颜色
+            width: 2,
           },
         },
       },
@@ -180,15 +171,46 @@ const initRealTimeDataChart = () => {
         name: "温度",
         type: "gauge",
         detail: { formatter: "{value}°C" },
-        data: [{ value: realTimeData.value.temperature, name: "温度" }],
+        min: 0,
+        max: 1500,
+        data: [{ value: temperature, name: "温度" }],
         axisLine: {
           lineStyle: {
             width: 10,
             color: [
-              [0.2, "#67C23A"],
-              [0.8, "#E6A23C"],
-              [1, "#F56C6C"],
+              [0.1, "#67C23A"],
+              [0.9, "#2528cd"],
+              [1, "#995218"],
             ],
+          },
+        },
+        title: {
+          show: true,
+          offsetCenter: [0, "70%"],
+          textStyle: {
+            fontSize: 20,
+            color: "#fff",
+          },
+        },
+        detail: {
+          formatter: "{value}°C",
+          textStyle: {
+            fontSize: 30,
+            color: "#fff",
+          },
+        },
+        splitLine: {
+          show: true,
+          lineStyle: {
+            color: "#fff",
+            width: 2,
+          },
+        },
+        axisTick: {
+          show: true,
+          lineStyle: {
+            color: "#fff",
+            width: 2,
           },
         },
       },
@@ -206,15 +228,46 @@ const initRealTimeDataChart = () => {
         name: "压力",
         type: "gauge",
         detail: { formatter: "{value} Pa" },
-        data: [{ value: realTimeData.value.pressure, name: "压力" }],
+        min: 0,
+        max: 1.6,
+        data: [{ value: pressure, name: "压力" }],
         axisLine: {
           lineStyle: {
             width: 10,
             color: [
-              [0.2, "#67C23A"],
-              [0.8, "#E6A23C"],
-              [1, "#F56C6C"],
+              [0.1, "#67C23A"],
+              [0.9, "#2528cd"],
+              [1, "#995218"],
             ],
+          },
+        },
+        title: {
+          show: true,
+          offsetCenter: [0, "70%"],
+          textStyle: {
+            fontSize: 20,
+            color: "#fff",
+          },
+        },
+        detail: {
+          formatter: "{value} Pa",
+          textStyle: {
+            fontSize: 30,
+            color: "#fff",
+          },
+        },
+        splitLine: {
+          show: true,
+          lineStyle: {
+            color: "#fff",
+            width: 2,
+          },
+        },
+        axisTick: {
+          show: true,
+          lineStyle: {
+            color: "#fff",
+            width: 2,
           },
         },
       },
@@ -232,22 +285,52 @@ const initRealTimeDataChart = () => {
         name: "能耗",
         type: "gauge",
         detail: { formatter: "{value} W" },
-        data: [{ value: realTimeData.value.powerConsumption, name: "能耗" }],
+        min: 0,
+        max: 1500,
+        data: [{ value: powerConsumption, name: "能耗" }],
         axisLine: {
           lineStyle: {
             width: 10,
             color: [
-              [0.2, "#67C23A"],
-              [0.8, "#E6A23C"],
-              [1, "#F56C6C"],
+              [0.1, "#67C23A"],
+              [0.9, "#2528cd"],
+              [1, "#995218"],
             ],
+          },
+        },
+        title: {
+          show: true,
+          offsetCenter: [0, "70%"],
+          textStyle: {
+            fontSize: 20,
+            color: "#fff",
+          },
+        },
+        detail: {
+          formatter: "{value} W",
+          textStyle: {
+            fontSize: 30,
+            color: "#fff",
+          },
+        },
+        splitLine: {
+          show: true,
+          lineStyle: {
+            color: "#fff",
+            width: 2,
+          },
+        },
+        axisTick: {
+          show: true,
+          lineStyle: {
+            color: "#fff",
+            width: 2,
           },
         },
       },
     ],
   });
 };
-
 // 窗口大小改变时重置图表大小
 const handleResize = () => {
   vibrationChart.resize();
@@ -257,7 +340,7 @@ const handleResize = () => {
 };
 onMounted(() => {
   updateTime();
-  timer = setInterval(updateTime, 1000);
+  timer = setInterval(updateTime, 2000);
   initWebSocket();
 
   initRealTimeDataChart();
@@ -272,6 +355,18 @@ onUnmounted(() => {
   }
 
   // 销毁图表实例
+  if (vibrationChart) {
+    vibrationChart.dispose();
+  }
+  if (temperatureChart) {
+    temperatureChart.dispose();
+  }
+  if (pressureChart) {
+    pressureChart.dispose();
+  }
+  if (powerConsumptionChart) {
+    powerConsumptionChart.dispose();
+  }
 
   // 移除窗口大小改变监听
   window.removeEventListener("resize", handleResize);
@@ -287,6 +382,7 @@ onUnmounted(() => {
 .dashboard-container {
   width: 100%;
   height: 120vh;
+  background: url(../../../assets/images/windowBG.png) center/cover no-repeat;
   background-color: #0f1c3c;
   color: #fff;
   padding: 15px;
@@ -297,7 +393,7 @@ onUnmounted(() => {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 50px;
+    height: 90px;
 
     .title {
       font-size: 25px;
@@ -376,7 +472,7 @@ onUnmounted(() => {
         .item-value {
           font-size: 22px;
           font-weight: bold;
-          color: #409eff;
+          color: #181a92;
         }
       }
     }

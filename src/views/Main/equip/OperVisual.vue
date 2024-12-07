@@ -10,15 +10,11 @@
       <div class="left-panel">
         <div class="chart-box">
           <div class="chart-title">设备运行状态分布</div>
-          <div id="deviceStatusChart" class="chart"></div>
+          <div id="deviceStatusChart" class="chart" style="height: 300px"></div>
         </div>
         <div class="chart-box">
           <div class="chart-title">设备类型分布</div>
-          <div id="deviceTypeChart" class="chart"></div>
-        </div>
-        <div class="chart-box">
-          <div class="chart-title">运行数据监控</div>
-          <div id="realTimeChart" class="chart"></div>
+          <div id="deviceTypeChart" class="chart" style="height: 300px"></div>
         </div>
       </div>
 
@@ -39,10 +35,31 @@
           </div>
         </div>
         <div class="chart-box">
-          <div class="chart-title">设备运行时长统计</div>
-          <div id="runningTimeChart" class="chart"></div>
+          <div class="chart-title">设备运行参数实时监控</div>
+          <div class="real-time-chart">
+            <table class="real-time-table">
+              <thead>
+                <tr>
+                  <th>温度</th>
+                  <th>压力</th>
+                  <th>氢气浓度</th>
+                  <th>能耗</th>
+                  <th>时间</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(data, index) in realTimeDataList" :key="index">
+                  <td>{{ data.temperature }}</td>
+                  <td>{{ data.pressure }}</td>
+                  <td>{{ data.hydrogenConcentration }}</td>
+                  <td>{{ data.powerConsumption }}</td>
+                  <td>{{ data.timestamp.replace("T", " ").substring(0, 19) }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
-        <div class="chart-box">
+        <div class="chart-box" style="height: 400px">
           <div class="chart-title">设备运行数据</div>
           <!-- 设备选择下拉框 -->
           <div class="device-select-container">
@@ -51,6 +68,7 @@
               placeholder="选择设备"
               @change="LoadOperationData(selectedDeviceId)"
               class="custom-select"
+              size="small"
             >
               <el-option v-for="device in deviceList" :key="device.value" :label="device.label" :value="device.value" />
             </el-select>
@@ -61,11 +79,11 @@
 
       <!-- 右侧面板 -->
       <div class="right-panel">
-        <div class="chart-box">
+        <div class="chart-box" style="height: 310px">
           <div class="chart-title">设备能耗趋势</div>
           <div id="energyChart" class="chart"></div>
         </div>
-        <div class="chart-box">
+        <div class="chart-box" style="height: 350px">
           <div class="chart-title">故障类型分布</div>
           <div id="faultTypeChart" class="chart"></div>
         </div>
@@ -73,15 +91,6 @@
     </div>
 
     <!-- 实时数据展示 -->
-    <div class="real-time-chart">
-      <h3>实时数据展示</h3>
-      <div>振动: {{ realTimeData.vibration }}</div>
-      <div>温度: {{ realTimeData.temperature }}</div>
-      <div>压力: {{ realTimeData.pressure }}</div>
-      <div>氢气浓度: {{ realTimeData.hydrogenConcentration }}</div>
-      <div>能耗: {{ realTimeData.powerConsumption }}</div>
-      <div>时间: {{ realTimeData.timestamp }}</div>
-    </div>
   </div>
 </template>
 
@@ -92,19 +101,11 @@ import { read } from "xlsx";
 import { page } from "../../../../api/device.js";
 import { selectByDeviceId } from "../../../../api/operation.js";
 
+let socket = null;
+
 // 时间显示
 const currentTime = ref("");
 let timer = null;
-
-// 实时数据
-const realTimeData = ref({
-  vibration: 0,
-  temperature: 0,
-  pressure: 0,
-  hydrogenConcentration: 0,
-  powerConsumption: 0,
-  timestamp: "",
-});
 
 const devicesCountData = ref({
   totalCount: 0,
@@ -119,8 +120,7 @@ const devicesTypeData = ref({
   otherDevices: 0,
 });
 
-// WebSocket connection
-let socket;
+const realTimeDataList = ref([]);
 
 const updateTime = () => {
   const now = new Date();
@@ -132,23 +132,36 @@ const initWebSocket = () => {
 
   socket.onmessage = (event) => {
     const data = JSON.parse(event.data);
-    realTimeData.value.vibration = data.vibration;
-    realTimeData.value.temperature = data.temperature;
-    realTimeData.value.pressure = data.pressure;
-    realTimeData.value.hydrogenConcentration = data.hydrogenConcentration;
-    realTimeData.value.powerConsumption = data.powerConsumption;
-    realTimeData.value.timestamp = data.timestamp;
+    // 将新数据添加到实时数据列表
+    realTimeDataList.value.push({
+      vibration: data.vibration,
+      temperature: data.temperature,
+      pressure: data.pressure,
+      hydrogenConcentration: data.hydrogenConcentration,
+      powerConsumption: data.powerConsumption,
+      timestamp: data.timestamp,
+    });
+    // 限制列表长度，保持最新的10条数据
+    if (realTimeDataList.value.length > 3) {
+      realTimeDataList.value.shift();
+    }
+  };
+  socket.onopen = () => {
+    console.log("WebSocket connection opened");
   };
 
   socket.onclose = () => {
     console.log("WebSocket connection closed");
+  };
+
+  socket.onerror = (error) => {
+    console.log("WebSocket error:", error);
   };
 };
 
 // 图表实例
 let deviceStatusChart = null;
 let deviceTypeChart = null;
-let runningTimeChart = null;
 let energyChart = null;
 let faultTypeChart = null;
 let realTimeChart = null;
@@ -173,6 +186,7 @@ const initDeviceStatusChart = (data) => {
     series: [
       {
         type: "pie",
+        color: ["#409EFF", "#E6A23C", "#67C23A"],
         radius: ["40%", "60%"],
         avoidLabelOverlap: false,
         itemStyle: {
@@ -195,11 +209,6 @@ const initDeviceStatusChart = (data) => {
       },
     ],
   });
-};
-
-// 初始化设备实时数据表
-const initRealTimeDataChart = () => {
-  deviceTypeChart = echarts.init(document.getElementById("realTimeChart"));
 };
 
 // 初始化设备类型分布图表
@@ -247,37 +256,6 @@ const initDeviceTypeChart = (data) => {
             return colors[params.dataIndex];
           },
         },
-      },
-    ],
-  });
-};
-
-// 初始化运行时长统计图表
-const initRunningTimeChart = () => {
-  runningTimeChart = echarts.init(document.getElementById("runningTimeChart"));
-  runningTimeChart.setOption({
-    tooltip: {
-      trigger: "axis",
-    },
-    xAxis: {
-      type: "category",
-      boundaryGap: false,
-      data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-      axisLabel: {
-        color: "#fff",
-      },
-    },
-    yAxis: {
-      type: "value",
-      axisLabel: {
-        color: "#fff",
-      },
-    },
-    series: [
-      {
-        data: [820, 932, 901, 934, 1290, 1330, 1320],
-        type: "line",
-        areaStyle: {},
       },
     ],
   });
@@ -367,7 +345,10 @@ const initEquipmentParamsChart = (
   hydrogenConcentrationData,
   powerConsumptionData
 ) => {
-  const equipmentParamsChart = echarts.init(document.getElementById("equipmentParamsChart"));
+  const equipmentParamsChart = echarts.init(document.getElementById("equipmentParamsChart"), {
+    width: "80%",
+    height: "50%",
+  });
   equipmentParamsChart.setOption({
     tooltip: {
       trigger: "axis",
@@ -510,7 +491,6 @@ const LoadOperationData = async (id = 1) => {
 const handleResize = () => {
   deviceStatusChart?.resize();
   deviceTypeChart?.resize();
-  runningTimeChart?.resize();
   energyChart?.resize();
   faultTypeChart?.resize();
 };
@@ -524,12 +504,10 @@ onMounted(async () => {
   // 初始化所有图表
   loadStatusData();
   LoadOperationData(1);
-  initDeviceTypeChart();
-  initRunningTimeChart();
+  // initRealTimeChart();
   initEnergyChart();
   initFaultTypeChart();
   initEquipmentParamsChart();
-  initRealTimeDataChart();
 
   // 添加窗口大小改变监听
   window.addEventListener("resize", handleResize);
@@ -544,7 +522,7 @@ onUnmounted(() => {
   // 销毁图表实例
   deviceStatusChart?.dispose();
   deviceTypeChart?.dispose();
-  runningTimeChart?.dispose();
+  realTimeChart?.dispose();
   energyChart?.dispose();
   faultTypeChart?.dispose();
 
@@ -562,6 +540,7 @@ onUnmounted(() => {
 .dashboard-container {
   width: 100%;
   height: 120vh;
+  background: url(../../../assets/images/windowBG.png) center/cover no-repeat;
   background-color: #0f1c3c;
   color: #fff;
   padding: 15px;
@@ -572,7 +551,7 @@ onUnmounted(() => {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 50px;
+    height: 90px;
 
     .title {
       font-size: 25px;
@@ -607,15 +586,14 @@ onUnmounted(() => {
 
     .center-panel {
       width: 44%;
-      height: 90%;
+      height: 80%;
     }
 
     .chart-box {
-      background-color: rgba(255, 255, 255, 0.05);
-      border-radius: 8px;
+      background-color: rgba(255, 255, 255, 0.03);
+      border-radius: 5px;
       padding: 12px;
       margin-bottom: 15px;
-      height: calc(50% - 8px);
 
       .chart-title {
         font-size: 16px;
@@ -673,5 +651,26 @@ onUnmounted(() => {
   background-color: #030d27;
   width: 220px;
   color: #ffffff;
+}
+
+.real-time-chart {
+  margin-top: 20px;
+  color: #fff;
+
+  .real-time-table {
+    width: 100%;
+    border-collapse: collapse;
+
+    th,
+    td {
+      border: 1px solid #fff;
+      padding: 8px;
+      text-align: center;
+    }
+
+    th {
+      background-color: #37549e;
+    }
+  }
 }
 </style>
