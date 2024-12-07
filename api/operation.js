@@ -39,3 +39,9 @@ export function selectById(id) {
     })
 }
 
+export function selectByDeviceId(deviceId) { 
+    return request({
+        url: '/operationData/device/' + deviceId,
+        method: 'get',
+    })
+}

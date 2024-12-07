@@ -30,7 +30,7 @@
           {{ $index + 1 }}
         </template>
       </el-table-column>
-      <el-table-column prop="deviceId" label="设备名称" width="180" header-align="center" align="center">
+      <el-table-column prop="deviceId" label="设备名称" sortable width="180" header-align="center" align="center">
         <template #default="{ row }">
           {{ getDeviceLabel(row.deviceId) }}
         </template>
@@ -39,7 +39,7 @@
       <el-table-column prop="pressure" label="压力" width="180" header-align="center" align="center" />
       <el-table-column prop="hydrogenConcentration" label="氢气浓度" width="180" header-align="center" align="center" />
       <el-table-column prop="powerConsumption" label="能耗" width="180" header-align="center" align="center" />
-      <el-table-column label="时间" width="300" header-align="center" align="center">
+      <el-table-column label="时间" sortable width="300" header-align="center" align="center">
         <template #default="{ row }">
           {{ row.timestamp ? row.timestamp.replace("T", " ") : "" }}
         </template>
@@ -102,13 +102,13 @@
   </div>
 </template>
 
-<script lang="ts" setup>
+<script lang="js" setup>
 import { ref, onMounted, reactive } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { pageOperationData, add, update, deleteById, selectById } from "../../../../api/operation.js";
 import { page } from "../../../../api/device.js";
 import * as XLSX from "xlsx";
-import { da, de } from "element-plus/es/locale/index.js";
+
 
 //展示添加设备表单变量
 const showAddOperation = ref(false);
@@ -165,6 +165,7 @@ const searchOperationData = () => {
     operationData.value = res.data.data.rows;
   });
 };
+
 const getDeviceList = (deviceData) => {
   let deviceList = deviceData.value.map((item) => {
     return {
@@ -235,7 +236,7 @@ const handleAddoperation = () => {
 };
 
 //处理编辑请求
-const handleEdit = async (id: number) => {
+const handleEdit = async (id) => {
   //打开窗口
   showAddOperation.value = true;
   loadDeviceList(); // 刷新设备列表
@@ -250,7 +251,7 @@ const handleEdit = async (id: number) => {
 };
 
 //处理删除请求
-const handleDelete = (id: number) => {
+const handleDelete = (id) => {
   ElMessageBox.confirm("确认删除?", "提示", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",

@@ -44,9 +44,12 @@
       </el-table-column>
       <el-table-column prop="status" label="设备运行状态" width="200" header-align="center" align="center">
         <template #default="{ row }">
-          <el-tag :type="row.status == '1' ? 'success' : 'danger'" style="width: 70px; margin-right: 10px">
-            {{ row.status == "1" ? "运行" : "停止" }}</el-tag
+          <el-tag
+            :type="row.status == '1' ? 'success' : row.status == '2' ? 'danger' : 'info'"
+            style="width: 70px; margin-right: 10px"
           >
+            {{ row.status == "1" ? "运行" : row.status == "2" ? "停止" : "维护" }}
+          </el-tag>
         </template>
       </el-table-column>
       <el-table-column label="创建时间" width="300" header-align="center" align="center">
@@ -104,7 +107,7 @@
   </div>
 </template>
 
-<script lang="ts" setup>
+<script lang="js" setup>
 import { ref, onMounted, reactive } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { page, add, update, deleteById, selectById } from "../../../../api/device.js";
@@ -145,6 +148,7 @@ const deviceList = [
 const statusList = [
   { status: 1, tag: "运行" },
   { status: 2, tag: "停止" },
+  {status: 3, tag: "维护"}
 ];
 //被选中的id数组
 const selectedIds = ref([]);
@@ -205,7 +209,7 @@ const handleAddDevice = () => {
 };
 
 //处理编辑请求
-const handleEdit = async (id: number) => {
+const handleEdit = async (id) => {
   //打开窗口
   showAddDevice.value = true;
   //发送请求
@@ -218,7 +222,7 @@ const handleEdit = async (id: number) => {
 };
 
 //处理删除请求
-const handleDelete = (id: number) => {
+const handleDelete = (id) => {
   ElMessageBox.confirm("确认删除?", "提示", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
