@@ -20,7 +20,22 @@
 
       <!-- 中间面板 -->
       <div class="center-panel">
-        <div class="data-overview"></div>
+        <div class="chart-box" style="height: 120px">
+          <div class="chart-title">设备状态预警</div>
+          <div class="chart">
+            <el-result
+              v-if="status === 'success'"
+              :icon="status"
+              title="设备运行正常"
+              class="custom-result"
+            ></el-result>
+            <el-result v-else :icon="status" title="设备运行异常" class="custom-result"></el-result>
+          </div>
+        </div>
+        <div class="chart-box" style="height: 300px">
+          <div class="chart-title">设备运行数据监控</div>
+          <div id="TimerSeriesChart" class="chart"></div>
+        </div>
       </div>
 
       <!-- 右侧面板 -->
@@ -39,7 +54,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, onMounted, onUnmounted, reactive } from "vue";
 import * as echarts from "echarts";
 import { read } from "xlsx";
 import { page } from "../../../../api/device.js";
@@ -62,9 +77,12 @@ let vibrationChart = null;
 let temperatureChart = null;
 let pressureChart = null;
 let powerConsumptionChart = null;
-
-const realTimeArray = ref([]);
-
+let TimerSeriesChart = null;
+const status = ref("success");
+let temperatureArray = [];
+let pressureArray = [];
+let powerConsumptionArray = [];
+let vibrationArray = [];
 // WebSocket connection
 let socket;
 
@@ -78,15 +96,40 @@ const initWebSocket = () => {
 
   socket.onmessage = (event) => {
     realTimeData.value = JSON.parse(event.data);
+    // 将数据放进参数数组中
+    temperatureArray.push(realTimeData.value.temperature);
+    pressureArray.push(realTimeData.value.pressure);
+    powerConsumptionArray.push(realTimeData.value.powerConsumption);
+    vibrationArray.push(realTimeData.value.vibration);
+    //判断数组长度是否大于100
+    if (temperatureArray.length > 100) {
+      temperatureArray.shift();
+      pressureArray.shift();
+      powerConsumptionArray.shift();
+      vibrationArray.shift();
+    }
+    //监测异常
+    if (
+      realTimeData.value.vibration > 0.5 ||
+      realTimeData.value.temperature > 1200 ||
+      realTimeData.value.pressure > 1.5 ||
+      realTimeData.value.powerConsumption > 1000
+    ) {
+      status.value = "warning";
+    } else {
+      status.value = "success";
+    }
+    // 更新仪表盘
     initRealTimeDataChart(
       realTimeData.value.vibration,
       realTimeData.value.temperature,
       realTimeData.value.pressure,
       realTimeData.value.powerConsumption
     );
-  };
 
-  realTimeArray.value = ref([]);
+    // 更新时间序列图
+    initTimerSeriesChart(temperatureArray, pressureArray, vibrationArray, powerConsumptionArray);
+  };
 
   socket.onclose = () => {
     console.log("WebSocket connection closed");
@@ -284,7 +327,7 @@ const initRealTimeDataChart = (vibration = 0, temperature = 0, pressure = 0, pow
       {
         name: "能耗",
         type: "gauge",
-        detail: { formatter: "{value} W" },
+        detail: { formatter: "{value} KW" },
         min: 0,
         max: 1500,
         data: [{ value: powerConsumption, name: "能耗" }],
@@ -307,7 +350,7 @@ const initRealTimeDataChart = (vibration = 0, temperature = 0, pressure = 0, pow
           },
         },
         detail: {
-          formatter: "{value} W",
+          formatter: "{value} KW",
           textStyle: {
             fontSize: 30,
             color: "#fff",
@@ -331,6 +374,54 @@ const initRealTimeDataChart = (vibration = 0, temperature = 0, pressure = 0, pow
     ],
   });
 };
+
+const initTimerSeriesChart = (temperatureData, pressureData, vibrationData, powerConsumptionData) => {
+  TimerSeriesChart = echarts.init(document.getElementById("TimerSeriesChart"));
+  TimerSeriesChart.setOption({
+    tooltip: {
+      trigger: "axis",
+    },
+    legend: {
+      data: ["温度", "压力", "振动", "能耗"],
+      textStyle: { color: "#fff" },
+    },
+    xAxis: {
+      type: "category",
+      name: "时间:s",
+      data: Array.from({ length: temperatureData.length }, (_, i) => `${i}s`),
+      axisLabel: { color: "#fff" },
+    },
+    yAxis: [
+      {
+        type: "value",
+        name: "value",
+        axisLabel: { color: "#fff" },
+      },
+    ],
+    series: [
+      {
+        name: "温度",
+        type: "line",
+        data: temperatureData,
+      },
+      {
+        name: "压力",
+        type: "line",
+        data: pressureData,
+      },
+      {
+        name: "振动",
+        type: "line",
+        data: vibrationData,
+      },
+      {
+        name: "能耗",
+        type: "line",
+        data: powerConsumptionData,
+      },
+    ],
+  });
+};
 // 窗口大小改变时重置图表大小
 const handleResize = () => {
   vibrationChart.resize();
@@ -344,6 +435,7 @@ onMounted(() => {
   initWebSocket();
 
   initRealTimeDataChart();
+  initTimerSeriesChart(temperatureArray, pressureArray, vibrationArray, powerConsumptionArray);
   handleResize(); // 确保第一次渲染时触发 resize
   window.addEventListener("resize", handleResize);
 });
@@ -366,6 +458,9 @@ onUnmounted(() => {
   }
   if (powerConsumptionChart) {
     powerConsumptionChart.dispose();
+  }
+  if (TimerSeriesChart) {
+    TimerSeriesChart.dispose();
   }
 
   // 移除窗口大小改变监听
@@ -439,41 +534,17 @@ onUnmounted(() => {
       height: calc(50% - 8px);
 
       .chart-title {
-        font-size: 16px;
+        font-size: 18px;
         font-weight: bold;
         margin-bottom: 8px;
         text-align: center;
         white-space: nowrap;
+        // border-left: #0f1c3c solid 5px;
       }
 
       .chart {
         height: calc(100% - 15px);
         width: 100%;
-      }
-    }
-
-    .data-overview {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 15px;
-
-      .overview-item {
-        background-color: rgba(255, 255, 255, 0.05);
-        border-radius: 10px;
-        padding: 12px;
-        width: 30%;
-        text-align: center;
-
-        .item-title {
-          font-size: 13px;
-          margin-bottom: 8px;
-        }
-
-        .item-value {
-          font-size: 22px;
-          font-weight: bold;
-          color: #181a92;
-        }
       }
     }
   }
@@ -482,5 +553,17 @@ onUnmounted(() => {
 .real-time-data {
   margin-top: 20px;
   color: #fff;
+}
+
+.custom-result {
+  padding: 0px;
+  height: 100px;
+}
+:deep(.el-result) {
+  --el-result-title-margin-top: 6px;
+}
+:deep(.el-result__title p) {
+  color: #d8e4e0;
+  font-size: 16px;
 }
 </style>

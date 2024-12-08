@@ -34,8 +34,20 @@
             <div class="item-value">{{ devicesCountData.maintenanceCount }}</div>
           </div>
         </div>
-        <div class="chart-box">
+        <div class="chart-box" style="height: 235px">
           <div class="chart-title">设备运行参数实时监控</div>
+          <!-- 设备选择下拉框 -->
+          <div class="device-select-container">
+            <el-select
+              v-model="selectedDeviceId"
+              placeholder="选择设备"
+              @change="handleDeviceChange(MonitoringSelectedDeviceId)"
+              class="custom-select"
+              size="small"
+            >
+              <el-option v-for="device in deviceList" :key="device.value" :label="device.label" :value="device.value" />
+            </el-select>
+          </div>
           <div class="real-time-chart">
             <table class="real-time-table">
               <thead>
@@ -127,8 +139,8 @@ const updateTime = () => {
   currentTime.value = now.toLocaleString();
 };
 
-const initWebSocket = () => {
-  socket = new WebSocket("ws://localhost:8080/websocket/monitoring-data/2");
+const initWebSocket = (id = 1) => {
+  socket = new WebSocket(`ws://localhost:8080/websocket/monitoring-data/${id}`);
 
   socket.onmessage = (event) => {
     const data = JSON.parse(event.data);
@@ -141,7 +153,7 @@ const initWebSocket = () => {
       powerConsumption: data.powerConsumption,
       timestamp: data.timestamp,
     });
-    // 限制列表长度，保持最新的10条数据
+    // 限制列表长度，保持最新的3条数据
     if (realTimeDataList.value.length > 3) {
       realTimeDataList.value.shift();
     }
@@ -167,6 +179,7 @@ let faultTypeChart = null;
 let realTimeChart = null;
 
 const selectedDeviceId = ref("");
+const MonitoringSelectedDeviceId = ref("");
 const deviceList = ref([]);
 
 // 初始化设备状态分布图表
@@ -486,6 +499,11 @@ const LoadOperationData = async (id = 1) => {
     console.log("读取操作数据失败", response.data.msg);
     ElMessage.error(response.data.msg);
   }
+};
+
+const handleDeviceChange = (id) => {
+  realTimeDataList.value = [];
+  initWebSocket(id);
 };
 // 窗口大小改变时重置图表大小
 const handleResize = () => {
