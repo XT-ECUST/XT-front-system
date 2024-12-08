@@ -143,7 +143,7 @@ const initWebSocket = (id = 1) => {
     ) {
       status.value = "warning";
       alarmInfo.value.push(
-        `设备${selectedDeviceId.value}出现异常，振动 ${realTimeData.value.vibration} V, 温度 ${realTimeData.value.temperature}℃ , 压力 ${realTimeData.value.pressure} Pa, 能耗 ${realTimeData.value.powerConsumption} kw,请及时查看设备运行状态！`
+        `设备${selectedDeviceId.value}出现异常，振动 ${realTimeData.value.vibration} V, 温度 ${realTimeData.value.temperature}℃ , 压力 ${realTimeData.value.pressure} Pa, 能耗 ${realTimeData.value.powerConsumption} kw,请及时查看设备运行状态！  时间: ${currentTime.value}`
       );
       if (alarmInfo.value.length > 3) {
         alarmInfo.value.shift();
