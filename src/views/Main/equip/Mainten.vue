@@ -32,8 +32,19 @@
             <el-result v-else :icon="status" title="设备运行异常" class="custom-result"></el-result>
           </div>
         </div>
-        <div class="chart-box" style="height: 300px">
+        <div class="chart-box" style="height: 330px">
           <div class="chart-title">设备运行数据监控</div>
+          <div class="device-select-container">
+            <el-select
+              v-model="selectedDeviceId"
+              placeholder="选择设备"
+              @change="handleDeviceChange(selectedDeviceId)"
+              class="custom-select"
+              size="small"
+            >
+              <el-option v-for="device in deviceList" :key="device.value" :label="device.label" :value="device.value" />
+            </el-select>
+          </div>
           <div id="TimerSeriesChart" class="chart"></div>
         </div>
       </div>
@@ -78,6 +89,9 @@ let temperatureChart = null;
 let pressureChart = null;
 let powerConsumptionChart = null;
 let TimerSeriesChart = null;
+
+const selectedDeviceId = ref("");
+let deviceList = ref([]);
 const status = ref("success");
 let temperatureArray = [];
 let pressureArray = [];
@@ -91,8 +105,8 @@ const updateTime = () => {
   currentTime.value = now.toLocaleString();
 };
 
-const initWebSocket = () => {
-  socket = new WebSocket("ws://localhost:8080/websocket/monitoring-data/2");
+const initWebSocket = (id = 1) => {
+  socket = new WebSocket(`ws://localhost:8080/websocket/monitoring-data/${id}`);
 
   socket.onmessage = (event) => {
     realTimeData.value = JSON.parse(event.data);
@@ -376,7 +390,7 @@ const initRealTimeDataChart = (vibration = 0, temperature = 0, pressure = 0, pow
 };
 
 const initTimerSeriesChart = (temperatureData, pressureData, vibrationData, powerConsumptionData) => {
-  TimerSeriesChart = echarts.init(document.getElementById("TimerSeriesChart"));
+  TimerSeriesChart = echarts.init(document.getElementById("TimerSeriesChart"), { width: "80%", height: "50%" });
   TimerSeriesChart.setOption({
     tooltip: {
       trigger: "axis",
@@ -422,6 +436,47 @@ const initTimerSeriesChart = (temperatureData, pressureData, vibrationData, powe
     ],
   });
 };
+
+const loadDeviceList = () => {
+  let deviceName = "";
+  let deviceType = "";
+  page(deviceName, deviceType, 1, 1000)
+    .then((res) => {
+      if (res.data.code === 1) {
+        let deviceData = res.data.data.rows;
+        deviceList.value = getDeviceList(deviceData);
+        console.log("设备数据加载成功", deviceData.value);
+      } else {
+        ElMessage.error(res.data.msg);
+      }
+    })
+    .catch((error) => {
+      ElMessage.error(error.message);
+    });
+};
+
+const getDeviceList = (deviceData) => {
+  let deviceList = deviceData.map((item) => {
+    return {
+      label: item.deviceName,
+      value: item.deviceId,
+    };
+  });
+  console.log("设备列表", deviceList);
+  return deviceList;
+};
+
+const handleDeviceChange = (deviceId) => {
+  if (socket) {
+    socket.close();
+  }
+  temperatureArray = [];
+  pressureArray = [];
+  powerConsumptionArray = [];
+  vibrationArray = [];
+  initWebSocket(deviceId);
+};
+
 // 窗口大小改变时重置图表大小
 const handleResize = () => {
   vibrationChart.resize();
@@ -429,9 +484,11 @@ const handleResize = () => {
   pressureChart.resize();
   powerConsumptionChart.resize();
 };
+
 onMounted(() => {
   updateTime();
   timer = setInterval(updateTime, 2000);
+  loadDeviceList();
   initWebSocket();
 
   initRealTimeDataChart();
@@ -565,5 +622,17 @@ onUnmounted(() => {
 :deep(.el-result__title p) {
   color: #d8e4e0;
   font-size: 16px;
+}
+
+.device-select-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.custom-select {
+  background-color: #030d27;
+  width: 220px;
+  color: #ffffff;
 }
 </style>
