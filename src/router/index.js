@@ -49,8 +49,13 @@ const routes = [
         meta: { title: "设备管理", isShow: false, icon: "Position" },
         children: [
           {
-            path: "/equip/RunManage",
-            component: () => import("../views/Main/equip/RunManage.vue"),
+            path: "/equip/EquipManage",
+            component: () => import("../views/Main/equip/DeviceManage.vue"),
+            meta: { title: "设备管理", icon: 'promotion' },
+          },
+          {
+            path: "/equip/OperationData",
+            component: () => import("../views/Main/equip/OperationManage.vue"),
             meta: { title: "设备运行管理", icon: 'promotion' },
           },
           {

@@ -28,7 +28,7 @@ service.interceptors.response.use(
     },
     (error: AxiosError) => {
         console.log(error);
-        return Promise.reject();
+        return Promise.reject(error);
     }
 );
 
