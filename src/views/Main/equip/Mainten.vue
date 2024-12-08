@@ -47,6 +47,13 @@
           </div>
           <div id="TimerSeriesChart" class="chart"></div>
         </div>
+
+        <div class="chart-box alarm-box" style="height: 220px; background-color: rgba(214, 52, 52, 0.1)">
+          <div class="chart-title">报警信息</div>
+          <ul class="alarm-info">
+            <li v-for="(info, index) in alarmInfo" :key="index">{{ info }}</li>
+          </ul>
+        </div>
       </div>
 
       <!-- 右侧面板 -->
@@ -83,20 +90,25 @@ const realTimeData = ref({
   powerConsumption: 0,
   timestamp: "",
 });
-
+// 图表实例
 let vibrationChart = null;
 let temperatureChart = null;
 let pressureChart = null;
 let powerConsumptionChart = null;
 let TimerSeriesChart = null;
-
+// 设备选择
 const selectedDeviceId = ref("");
 let deviceList = ref([]);
+// 设备状态
 const status = ref("success");
+// 设备数据
 let temperatureArray = [];
 let pressureArray = [];
 let powerConsumptionArray = [];
 let vibrationArray = [];
+
+//报警信息
+const alarmInfo = ref([]);
 // WebSocket connection
 let socket;
 
@@ -125,11 +137,17 @@ const initWebSocket = (id = 1) => {
     //监测异常
     if (
       realTimeData.value.vibration > 0.5 ||
-      realTimeData.value.temperature > 1200 ||
-      realTimeData.value.pressure > 1.5 ||
+      realTimeData.value.temperature > 1180 ||
+      realTimeData.value.pressure > 1.3 ||
       realTimeData.value.powerConsumption > 1000
     ) {
       status.value = "warning";
+      alarmInfo.value.push(
+        `设备${selectedDeviceId.value}出现异常，振动 ${realTimeData.value.vibration} V, 温度 ${realTimeData.value.temperature}℃ , 压力 ${realTimeData.value.pressure} Pa, 能耗 ${realTimeData.value.powerConsumption} kw,请及时查看设备运行状态！`
+      );
+      if (alarmInfo.value.length > 3) {
+        alarmInfo.value.shift();
+      }
     } else {
       status.value = "success";
     }
@@ -634,5 +652,19 @@ onUnmounted(() => {
   background-color: #030d27;
   width: 220px;
   color: #ffffff;
+}
+
+.alarm-info {
+  // background-color: rgba(255, 0, 0, 0.1);
+  border-radius: 5px;
+  padding: 10px;
+  margin-top: 10px;
+  color: rgba(244, 91, 91, 0.7);
+  font-weight: bold;
+  list-style-type: none;
+}
+
+.alarm-info li {
+  margin: 5px 0;
 }
 </style>
