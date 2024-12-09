@@ -118,7 +118,7 @@ const showAddDevice = ref(false);
 //分页参数
 const background = ref(true);
 const currentPage = ref(1);
-const pageSize = ref(5);
+const pageSize = ref(10);
 const totalCount = ref(0);
 //设备对象
 const device = ref({

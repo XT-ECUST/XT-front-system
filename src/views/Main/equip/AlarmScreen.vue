@@ -667,4 +667,9 @@ onUnmounted(() => {
 .alarm-info li {
   margin: 5px 0;
 }
+
+:deep(.el-select__wrapper) {
+  background-color: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 0 0 0.5px #4dadff inset;
+}
 </style>

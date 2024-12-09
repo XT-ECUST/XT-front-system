@@ -56,17 +56,17 @@ const routes = [
           {
             path: "/equip/OperationData",
             component: () => import("../views/Main/equip/OperationManage.vue"),
-            meta: { title: "设备运行管理", icon: 'promotion' },
+            meta: { title: "运行数据管理", icon: 'promotion' },
           },
           {
             path: "/equip/OperVisual",
-            component: () => import("../views/Main/equip/OperVisual.vue"),
-            meta: { title: "设备运行可视化", icon: 'promotion' },
+            component: () => import("../views/Main/equip/DeviceScreen.vue"),
+            meta: { title: "设备运行大屏", icon: 'promotion' },
           },
           {
             path: "/equip/Mainten",
-            component: () => import("../views/Main/equip/Mainten.vue"),
-            meta: { title: "检维修管理", icon: 'promotion' },
+            component: () => import("../views/Main/equip/AlarmScreen.vue"),
+            meta: { title: "报警大屏", icon: 'promotion' },
           },
         ],
       },
