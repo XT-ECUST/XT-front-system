@@ -581,7 +581,7 @@ onUnmounted(() => {
     .title {
       font-size: 25px;
       font-weight: bold;
-      margin: 0px auto;
+      margin-left: 42%;
       line-height: 50px;
     }
 

@@ -66,7 +66,7 @@ const routes = [
           {
             path: "/equip/Mainten",
             component: () => import("../views/Main/equip/AlarmScreen.vue"),
-            meta: { title: "报警大屏", icon: 'promotion' },
+            meta: { title: "报警显示大屏", icon: 'promotion' },
           },
         ],
       },
