@@ -39,7 +39,7 @@
           <!-- 设备选择下拉框 -->
           <div class="device-select-container">
             <el-select
-              v-model="selectedDeviceId"
+              v-model="MonitoringSelectedDeviceId"
               placeholder="选择设备"
               @change="handleDeviceChange(MonitoringSelectedDeviceId)"
               class="custom-select"
@@ -315,52 +315,6 @@ const initDeviceTypeChart = (data) => {
   });
 };
 
-// 初始化故障类型分布图表
-const initFaultTypeChart = () => {
-  faultTypeChart = echarts.init(document.getElementById("faultTypeChart"));
-  faultTypeChart.setOption({
-    tooltip: {
-      trigger: "item",
-    },
-    legend: {
-      top: "5%",
-      left: "center",
-      textStyle: {
-        color: "#fff",
-      },
-    },
-    series: [
-      {
-        type: "pie",
-        radius: ["40%", "70%"],
-        avoidLabelOverlap: false,
-        itemStyle: {
-          borderRadius: 10,
-          borderColor: "#fff",
-          borderWidth: 2,
-        },
-        label: {
-          show: false,
-          position: "center",
-        },
-        emphasis: {
-          label: {
-            show: true,
-            fontSize: 20,
-            fontWeight: "bold",
-          },
-        },
-        data: [
-          { value: 2, name: "机械故障" },
-          { value: 1, name: "电气故障" },
-          { value: 1, name: "传感器故障" },
-          { value: 1, name: "其他" },
-        ],
-      },
-    ],
-  });
-};
-
 // 初始化设备运行数据监控图表
 const initEquipmentParamsChart = (
   runningTimeData,
@@ -511,6 +465,9 @@ const LoadOperationData = async (id = 1) => {
 };
 
 const handleDeviceChange = (id) => {
+  if (socket) {
+    socket.close();
+  }
   realTimeDataList.value = [];
   initWebSocket(id);
 };
