@@ -107,10 +107,20 @@
   </div>
 </template>
 
-<script lang="js" setup>
+<script lang="ts" setup>
 import { ref, onMounted, reactive } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
+import type { FormInstance } from "element-plus";
 import { page, add, update, deleteById, selectById } from "../../../../api/device.js";
+
+interface Device {
+  deviceId: string | number;
+  deviceName: string;
+  deviceType: string;
+  status: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
 
 //展示添加设备表单变量
 const showAddDevice = ref(false);
@@ -133,10 +143,10 @@ const deviceSearch = ref({
   deviceType: "",
 });
 //默认设备数据
-const deviceData = ref([]);
+const deviceData = ref<Device[]>([]);
 
 //
-const formRef = ref(null);
+const formRef = ref<FormInstance | null>(null);
 
 //设备映射集合
 const deviceList = [
@@ -148,13 +158,13 @@ const deviceList = [
 const statusList = [
   { status: 1, tag: "运行" },
   { status: 2, tag: "停止" },
-  {status: 3, tag: "维护"}
+  { status: 3, tag: "维护" },
 ];
 //被选中的id数组
-const selectedIds = ref([]);
+const selectedIds = ref<(string | number)[]>([]);
 
 //复选框选中数据集合
-const multipleSelection = ref([]);
+const multipleSelection = ref<Device[]>([]);
 
 //清空查询条件
 const clearAll = () => {
@@ -273,11 +283,8 @@ const deleteByIds = () => {
 
 // 提交添加
 const submitAdd = async () => {
-  // 获取表单实例
-  const form = formRef.value;
-
-  // 调用表单的 validate 方法
-  const valid = await form.validate();
+  if (!formRef.value) return;
+  const valid = await formRef.value.validate();
   if (valid) {
     let method;
     if (device.value.deviceId) {

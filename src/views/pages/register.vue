@@ -3,7 +3,7 @@
     <div class="register-box">
       <div class="register-header">
         <img style="width: 35px" src="" alt="" />
-        <div class="register-title">新特工业互联网系统平台</div>
+        <div class="register-title">多晶硅设备运行与报警监控系统</div>
       </div>
       <div class="register-form">
         <el-form :model="registerForm" label-width="auto" ref="registerRef" :rules="rules" style="max-width: 450px">

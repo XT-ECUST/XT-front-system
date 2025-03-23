@@ -23,7 +23,7 @@ service.interceptors.response.use(
         if (response.status === 200) {
             return response;
         } else {
-            Promise.reject();
+            return Promise.reject(response);
         }
     },
     (error: AxiosError) => {
