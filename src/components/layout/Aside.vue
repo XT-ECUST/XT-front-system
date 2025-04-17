@@ -2,7 +2,7 @@
   <el-row class="tac">
     <el-col>
       <div class="mb-2">
-        <img src="src\components\images\XinTe_logo.png" class="logo" />
+        <img src="/src/components/images/XinTe_logo.png" class="logo" />
         <!-- {{ !$store.state.isCollapse ? "新特在线平台" : "后台" }} -->
       </div>
       <el-menu

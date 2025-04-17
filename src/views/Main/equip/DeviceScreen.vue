@@ -39,7 +39,7 @@
           <!-- 设备选择下拉框 -->
           <div class="device-select-container">
             <el-select
-              v-model="selectedDeviceId"
+              v-model="MonitoringSelectedDeviceId"
               placeholder="选择设备"
               @change="handleDeviceChange(MonitoringSelectedDeviceId)"
               class="custom-select"
@@ -92,12 +92,42 @@
       <!-- 右侧面板 -->
       <div class="right-panel">
         <div class="chart-box" style="height: 310px">
-          <div class="chart-title">设备能耗趋势</div>
-          <div id="energyChart" class="chart"></div>
+          <div class="chart-title">生产展示</div>
+          <div class="chart">
+            <div class="production">
+              <div class="production-item">
+                <img src="../../../assets/images/production-logo.png" alt="" class="production-logo" />
+                <div class="production-data">当月产量: {{ Production.monthlyProduction }} 吨</div>
+              </div>
+              <div class="production-item">
+                <img src="../../../assets/images/production-logo.png" alt="" class="production-logo" />
+                <div class="production-data">当日产量: {{ Production.dailyProduction }} 吨</div>
+              </div>
+            </div>
+          </div>
         </div>
         <div class="chart-box" style="height: 350px">
-          <div class="chart-title">故障类型分布</div>
-          <div id="faultTypeChart" class="chart"></div>
+          <div class="chart-title">投入产出监控</div>
+          <div class="real-time-chart">
+            <table class="real-time-table">
+              <thead>
+                <tr>
+                  <th>部门</th>
+                  <th>投入</th>
+                  <th>产出</th>
+                  <th>投入产出率</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(production, index) in productionLineData" :key="index">
+                  <td>{{ production.department }}</td>
+                  <td>{{ production.putInto }}</td>
+                  <td>{{ production.putOut }}</td>
+                  <td>{{ production.IntoOutRatio }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
@@ -130,6 +160,11 @@ const devicesTypeData = ref({
   restorationBoilerCount: 0,
   coldHydrogenation: 0,
   otherDevices: 0,
+});
+
+const Production = ref({
+  monthlyProduction: 3619,
+  dailyProduction: 136,
 });
 
 const realTimeDataList = ref([]);
@@ -174,13 +209,19 @@ const initWebSocket = (id = 1) => {
 // 图表实例
 let deviceStatusChart = null;
 let deviceTypeChart = null;
-let energyChart = null;
 let faultTypeChart = null;
 let realTimeChart = null;
 
 const selectedDeviceId = ref("");
 const MonitoringSelectedDeviceId = ref("");
 const deviceList = ref([]);
+
+const productionLineData = ref([
+  { department: 1, putInto: 138754, putOut: 98754, IntoOutRatio: 0.71 },
+  { department: 2, putInto: 73892, putOut: 87987, IntoOutRatio: 1.19 },
+  { department: 3, putInto: 123456, putOut: 654321, IntoOutRatio: 0.56 },
+  { department: 4, putInto: 98765, putOut: 59876, IntoOutRatio: 0.6 },
+]);
 
 // 初始化设备状态分布图表
 const initDeviceStatusChart = (data) => {
@@ -274,82 +315,6 @@ const initDeviceTypeChart = (data) => {
   });
 };
 
-// 初始化能耗趋势图表
-const initEnergyChart = () => {
-  energyChart = echarts.init(document.getElementById("energyChart"));
-  energyChart.setOption({
-    tooltip: {
-      trigger: "axis",
-    },
-    xAxis: {
-      type: "category",
-      data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-      axisLabel: {
-        color: "#fff",
-      },
-    },
-    yAxis: {
-      type: "value",
-      axisLabel: {
-        color: "#fff",
-      },
-    },
-    series: [
-      {
-        data: [150, 230, 224, 218, 135, 147, 260],
-        type: "line",
-        smooth: true,
-      },
-    ],
-  });
-};
-
-// 初始化故障类型分布图表
-const initFaultTypeChart = () => {
-  faultTypeChart = echarts.init(document.getElementById("faultTypeChart"));
-  faultTypeChart.setOption({
-    tooltip: {
-      trigger: "item",
-    },
-    legend: {
-      top: "5%",
-      left: "center",
-      textStyle: {
-        color: "#fff",
-      },
-    },
-    series: [
-      {
-        type: "pie",
-        radius: ["40%", "70%"],
-        avoidLabelOverlap: false,
-        itemStyle: {
-          borderRadius: 10,
-          borderColor: "#fff",
-          borderWidth: 2,
-        },
-        label: {
-          show: false,
-          position: "center",
-        },
-        emphasis: {
-          label: {
-            show: true,
-            fontSize: 20,
-            fontWeight: "bold",
-          },
-        },
-        data: [
-          { value: 2, name: "机械故障" },
-          { value: 1, name: "电气故障" },
-          { value: 1, name: "传感器故障" },
-          { value: 1, name: "其他" },
-        ],
-      },
-    ],
-  });
-};
-
 // 初始化设备运行数据监控图表
 const initEquipmentParamsChart = (
   runningTimeData,
@@ -417,7 +382,6 @@ const loadStatusData = async () => {
   if (response.data.code === 1) {
     const devices = response.data.data.rows;
     deviceList.value = getDeviceList(devices);
-    console.log("设备列表", devices);
     devicesCountData.value.totalCount = response.data.data.total;
     devices.forEach((device) => {
       //读取设备状态信息
@@ -461,7 +425,6 @@ const getDeviceList = (deviceData) => {
       value: item.deviceId,
     };
   });
-  console.log("设备列表", deviceList);
   return deviceList;
 };
 
@@ -502,6 +465,9 @@ const LoadOperationData = async (id = 1) => {
 };
 
 const handleDeviceChange = (id) => {
+  if (socket) {
+    socket.close();
+  }
   realTimeDataList.value = [];
   initWebSocket(id);
 };
@@ -509,7 +475,6 @@ const handleDeviceChange = (id) => {
 const handleResize = () => {
   deviceStatusChart?.resize();
   deviceTypeChart?.resize();
-  energyChart?.resize();
   faultTypeChart?.resize();
 };
 
@@ -523,8 +488,7 @@ onMounted(async () => {
   loadStatusData();
   LoadOperationData(1);
   // initRealTimeChart();
-  initEnergyChart();
-  initFaultTypeChart();
+  // initFaultTypeChart();
   initEquipmentParamsChart();
 
   // 添加窗口大小改变监听
@@ -541,8 +505,8 @@ onUnmounted(() => {
   deviceStatusChart?.dispose();
   deviceTypeChart?.dispose();
   realTimeChart?.dispose();
-  energyChart?.dispose();
-  faultTypeChart?.dispose();
+  // energyChart?.dispose();
+  // faultTypeChart?.dispose();
 
   // 移除窗口大小改变监听
   window.removeEventListener("resize", handleResize);
@@ -574,7 +538,7 @@ onUnmounted(() => {
     .title {
       font-size: 25px;
       font-weight: bold;
-      margin: 0px auto;
+      margin-left: 42%;
       line-height: 50px;
     }
 
@@ -687,8 +651,46 @@ onUnmounted(() => {
     }
 
     th {
-      background-color: #37549e;
+      background-color: #172b5f;
     }
   }
 }
+
+.production {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 50px;
+  justify-content: space-between;
+  .production-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .production-logo {
+      width: 50px;
+    }
+    .production-data {
+      font-size: 16px;
+      font-weight: bold;
+      color: #499df0;
+    }
+  }
+}
+
+:deep(.el-select__wrapper) {
+  background-color: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 0 0 0.5px #4dadff inset;
+}
+
+// :deep(.el-table) {
+//   --el-table-tr-bg-color: #7e7d7d;
+
+//   th.el-table__cell {
+//     background-color: #131934;
+//   }
+
+//   .el-table__cell {
+//     padding: 5px 0;
+//   }
+// }
 </style>

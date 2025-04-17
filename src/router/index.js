@@ -56,17 +56,17 @@ const routes = [
           {
             path: "/equip/OperationData",
             component: () => import("../views/Main/equip/OperationManage.vue"),
-            meta: { title: "设备运行管理", icon: 'promotion' },
+            meta: { title: "运行数据管理", icon: 'promotion' },
           },
           {
             path: "/equip/OperVisual",
-            component: () => import("../views/Main/equip/OperVisual.vue"),
-            meta: { title: "设备运行可视化", icon: 'promotion' },
+            component: () => import("../views/Main/equip/DeviceScreen.vue"),
+            meta: { title: "设备运行大屏", icon: 'promotion' },
           },
           {
             path: "/equip/Mainten",
-            component: () => import("../views/Main/equip/Mainten.vue"),
-            meta: { title: "检维修管理", icon: 'promotion' },
+            component: () => import("../views/Main/equip/AlarmScreen.vue"),
+            meta: { title: "报警显示大屏", icon: 'promotion' },
           },
         ],
       },
@@ -75,14 +75,34 @@ const routes = [
         meta: { title: "生产管理", isShow: false, icon: "Position" },
         children: [
           {
-            path: "/create/LineDataAna",
-            component: () => import("../views/Main/create/LineDataAna.vue"),
-            meta: { title: "产线数据分析", icon: 'promotion' },
+            path: "/create/ProcessManage",
+            component: () => import("../views/Main/create/ProcessManage.vue"),
+            meta: { title: "工艺管理", icon: 'promotion' },
           },
           {
-            path: "/create/Alarm",
-            component: () => import("../views/Main/create/Alarm.vue"),
-            meta: { title: "报警管理", icon: 'promotion' },
+            path: "/create/Process",
+            component: () => import("../views/Main/create/Process.vue"),
+            meta: { title: "参数分析", icon: 'promotion' },
+          },
+          {
+            path: "/create/EnergyManagement",
+            component: () => import("../views/Main/create/EnergyManagement.vue"),
+            meta: { title: "能源管理", icon: 'promotion' },
+          },
+          {
+            path: "/create/LineMan",
+            component: () => import("../views/Main/create/LineMan.vue"),
+            meta: { title: "产线管理", icon: 'promotion' },
+          },
+          // {
+          //   path: "/create/inventory",
+          //   component: () => import("../views/Main/create/InventoryManagement.vue"),
+          //   meta: { title: "库存管理", icon: 'promotion' },
+          // },
+          {
+            path: "/create/inventoryInOut",
+            component: () => import("../views/Main/create/InventoryInOutMan.vue"),
+            meta: { title: "库存管理", icon: 'promotion' },
           },
           {
             path: "/create/Oper",
@@ -90,14 +110,26 @@ const routes = [
             meta: { title: "操作记录管理", icon: 'promotion' },
           },
           {
-            path: "/create/EnergyMan",
-            component: () => import("../views/Main/create/EnergyMan.vue"),
-            meta: { title: "能源管理", icon: 'promotion' },
-          },
-          {
             path: "/create/MaterialMan",
             component: () => import("../views/Main/create/MaterialMan.vue"),
             meta: { title: "物料管理", icon: 'promotion' },
+          },
+          
+        ],
+      },
+      {
+        path: "/users",
+        meta: { title: "人员管理", isShow: false, icon: "Position" },
+        children: [
+          {
+            path: "/users/userManage",
+            component: () => import("../views/Main/User/UserManage.vue"),
+            meta: { title: "用户管理", icon: 'promotion' },
+          },
+          {
+            path: "/users/deptManage",
+            component: () => import("../views/Main/User/deptManage.vue"),
+            meta: { title: "部门管理", icon: 'promotion' },
           },
         ],
       },

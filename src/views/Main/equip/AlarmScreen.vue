@@ -143,7 +143,7 @@ const initWebSocket = (id = 1) => {
     ) {
       status.value = "warning";
       alarmInfo.value.push(
-        `设备${selectedDeviceId.value}出现异常，振动 ${realTimeData.value.vibration} V, 温度 ${realTimeData.value.temperature}℃ , 压力 ${realTimeData.value.pressure} Pa, 能耗 ${realTimeData.value.powerConsumption} kw,请及时查看设备运行状态！`
+        `【${currentTime.value}】设备${selectedDeviceId.value}出现异常，振动 ${realTimeData.value.vibration} V, 温度 ${realTimeData.value.temperature}℃ , 压力 ${realTimeData.value.pressure} Pa, 能耗 ${realTimeData.value.powerConsumption} kw,请及时查看设备运行状态`
       );
       if (alarmInfo.value.length > 3) {
         alarmInfo.value.shift();
@@ -568,7 +568,7 @@ onUnmounted(() => {
     .title {
       font-size: 25px;
       font-weight: bold;
-      margin: 0px auto;
+      margin-left: 44.5%;
       line-height: 50px;
     }
 
@@ -666,5 +666,10 @@ onUnmounted(() => {
 
 .alarm-info li {
   margin: 5px 0;
+}
+
+:deep(.el-select__wrapper) {
+  background-color: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 0 0 0.5px #4dadff inset;
 }
 </style>

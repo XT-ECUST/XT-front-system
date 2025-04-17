@@ -2,14 +2,14 @@
   <div style="margin: 10px 50px 0px 50px">
     <!--搜索栏-->
     <div class="search-container">
-      <el-form :inline="true" :model="deviceSearch" class="demo-form-inline">
+      <el-form :inline="true" :model="productionLineSearch" class="demo-form-inline">
         <el-form-item label="名称：">
-          <el-input v-model="deviceSearch.deviceName" placeholder="名称：" clearable />
+          <el-input v-model="productionLineSearch.lineName" placeholder="名称：" clearable />
         </el-form-item>
-        <el-form-item label="设备类型" style="width: 200px">
-          <el-select v-model="deviceSearch.deviceType" placeholder="设备类型" clearable>
-            <el-option label="还原炉 " value="1" />
-            <el-option label="冷氢化流化床" value="2" />
+        <el-form-item label="产线类型" style="width: 200px">
+          <el-select v-model="productionLineSearch.lineType" placeholder="产线类型" clearable>
+            <el-option label="还原炉产线" value="1" />
+            <el-option label="冷氢化产线" value="2" />
           </el-select>
         </el-form-item>
         <el-form-item>
@@ -19,30 +19,30 @@
       </el-form>
     </div>
     <!--新增与批量删除按钮-->
-    <el-button type="primary" plain icon="Plus" @click="handleAddDevice"> 新增设备 </el-button>
+    <el-button type="primary" plain icon="Plus" @click="handleAddProductionLine"> 新增产线 </el-button>
     <el-button type="danger" plain icon="Delete" @click="deleteByIds"> 批量删除 </el-button>
     <!--表格展示列表-->
     <el-table
-      :data="deviceData"
+      :data="productionLineData"
       style="width: 100%; margin-top: 10px; margin-bottom: 10px"
       border
       @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="55" align="center"></el-table-column>
-      <el-table-column fixed prop="deviceId" label="序号" width="100" header-align="center" align="center">
+      <el-table-column fixed prop="lineId" label="序号" width="100" header-align="center" align="center">
         <template #default="{ $index }">
           {{ $index + 1 }}
         </template>
       </el-table-column>
-      <el-table-column prop="deviceName" label="设备名称" width="180" header-align="center" align="center" />
-      <el-table-column prop="deviceType" label="设备类型" width="180" header-align="center" align="center">
+      <el-table-column prop="lineName" label="产线名称" width="180" header-align="center" align="center" />
+      <el-table-column prop="lineType" label="产线类型" width="180" header-align="center" align="center">
         <template #default="{ row }">
-          <el-tag :type="row.deviceType == '1' ? 'primary' : 'warning'" style="width: 80px; margin-right: 10px">
-            {{ row.deviceType == "1" ? "还原炉" : "冷氢化流化床" }}
+          <el-tag :type="row.lineType == '1' ? 'primary' : 'warning'" style="width: 80px; margin-right: 10px">
+            {{ row.lineType == "1" ? "还原炉产线" : "冷氢化产线" }}
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="status" label="设备运行状态" width="200" header-align="center" align="center">
+      <el-table-column prop="status" label="产线运行状态" width="200" header-align="center" align="center">
         <template #default="{ row }">
           <el-tag
             :type="row.status == '1' ? 'success' : row.status == '2' ? 'danger' : 'info'"
@@ -64,8 +64,8 @@
       </el-table-column>
       <el-table-column fixed="right" label="操作" width="300" align="center">
         <template #default="{ row }">
-          <el-button type="primary" size="small" plain icon="Edit" @click="handleEdit(row.deviceId)"> 编辑 </el-button>
-          <el-button type="danger" size="small" plain icon="delete" @click="handleDelete(row.deviceId)">删除</el-button>
+          <el-button type="primary" size="small" plain icon="Edit" @click="handleEdit(row.lineId)"> 编辑 </el-button>
+          <el-button type="danger" size="small" plain icon="delete" @click="handleDelete(row.lineId)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -83,25 +83,25 @@
     </el-pagination>
 
     <!--对话框组件-->
-    <el-dialog v-model="showAddDevice" title="新增设备">
-      <el-form :model="device" ref="formRef" label-width="auto" style="max-width: 600px">
-        <el-form-item label="设备名称">
-          <el-input v-model="device.deviceName" placeholder="请输入设备名称" />
+    <el-dialog v-model="showAddProductionLine" title="新增产线">
+      <el-form :model="productionLine" ref="formRef" label-width="auto" style="max-width: 600px">
+        <el-form-item label="产线名称">
+          <el-input v-model="productionLine.lineName" placeholder="请输入产线名称" />
         </el-form-item>
-        <el-form-item label="设备类型">
-          <el-select v-model="device.deviceType" placeholder="请选择设备类型" clearable>
-            <el-option v-for="item in deviceList" :key="item.deviceType" :label="item.tag" :value="item.deviceType" />
+        <el-form-item label="产线类型">
+          <el-select v-model="productionLine.lineType" placeholder="请选择产线类型" clearable>
+            <el-option v-for="item in lineTypeList" :key="item.lineType" :label="item.tag" :value="item.lineType" />
           </el-select>
         </el-form-item>
-        <el-form-item label="设备状态">
-          <el-select v-model="device.status" placeholder="请选择设备状态" clearable>
+        <el-form-item label="产线状态">
+          <el-select v-model="productionLine.status" placeholder="请选择产线状态" clearable>
             <el-option v-for="item in statusList" :key="item.status" :label="item.tag" :value="item.status" />
           </el-select>
         </el-form-item>
       </el-form>
       <el-form-item>
         <el-button type="primary" @click="submitAdd()">确定</el-button>
-        <el-button @click="showAddDevice = false">取消</el-button>
+        <el-button @click="showAddProductionLine = false">取消</el-button>
       </el-form-item>
     </el-dialog>
   </div>
@@ -111,50 +111,50 @@
 import { ref, onMounted, reactive } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import type { FormInstance } from "element-plus";
-import { page, add, update, deleteById, selectById } from "../../../../api/device.js";
+import { page, add, update, deleteById, selectById } from "../../../../api/productionLine.js";
 
-interface Device {
-  deviceId: string | number;
-  deviceName: string;
-  deviceType: string;
+interface ProductionLine {
+  lineId: string | number;
+  lineName: string;
+  lineType: string;
   status: string;
   createdAt?: string;
   updatedAt?: string;
 }
 
-//展示添加设备表单变量
-const showAddDevice = ref(false);
+//展示添加产线表单变量
+const showAddProductionLine = ref(false);
 
 //分页参数
 const background = ref(true);
 const currentPage = ref(1);
 const pageSize = ref(10);
 const totalCount = ref(0);
-//设备对象
-const device = ref({
-  deviceId: "",
-  deviceName: "",
-  deviceType: "",
+//产线对象
+const productionLine = ref({
+  lineId: "",
+  lineName: "",
+  lineType: "",
   status: "",
 });
-//查询设备参数
-const deviceSearch = ref({
-  deviceName: "",
-  deviceType: "",
+//查询产线参数
+const productionLineSearch = ref({
+  lineName: "",
+  lineType: "",
 });
-//默认设备数据
-const deviceData = ref<Device[]>([]);
+//默认产线数据
+const productionLineData = ref<ProductionLine[]>([]);
 
 //
 const formRef = ref<FormInstance | null>(null);
 
-//设备映射集合
-const deviceList = [
-  { deviceType: 1, tag: "还原炉" },
-  { deviceType: 2, tag: "冷氢化流化床" },
+//产线类型映射集合
+const lineTypeList = [
+  { lineType: 1, tag: "还原炉产线" },
+  { lineType: 2, tag: "冷氢化产线" },
 ];
 
-//设备状态映射集合
+//产线状态映射集合
 const statusList = [
   { status: 1, tag: "运行" },
   { status: 2, tag: "停止" },
@@ -164,26 +164,31 @@ const statusList = [
 const selectedIds = ref<(string | number)[]>([]);
 
 //复选框选中数据集合
-const multipleSelection = ref<Device[]>([]);
+const multipleSelection = ref<ProductionLine[]>([]);
 
 //清空查询条件
 const clearAll = () => {
   console.log("清空查询条件");
-  deviceSearch.value = { deviceName: "", deviceType: "" };
-  searchDevice();
+  productionLineSearch.value = { lineName: "", lineType: "" };
+  searchProductionLine();
 };
 //查询分页数据
-const searchDevice = () => {
-  console.log("查询设备信息");
-  page(deviceSearch.value.deviceName, deviceSearch.value.deviceType, currentPage.value, pageSize.value).then((res) => {
+const searchProductionLine = () => {
+  console.log("查询产线信息");
+  page(
+    productionLineSearch.value.lineName,
+    productionLineSearch.value.lineType,
+    currentPage.value,
+    pageSize.value
+  ).then((res) => {
     totalCount.value = res.data.data.total;
-    deviceData.value = res.data.data.rows;
+    productionLineData.value = res.data.data.rows;
   });
 };
 //查询方法
 const onSubmit = () => {
   currentPage.value = 1;
-  searchDevice();
+  searchProductionLine();
 };
 
 // 复选框选中后执行的方法
@@ -194,38 +199,38 @@ const handleSelectionChange = (val) => {
 const handleSizeChange = (val) => {
   // 重新设置每页显示的条数
   pageSize.value = val;
-  searchDevice();
+  searchProductionLine();
 };
 
 const handleCurrentChange = (val) => {
   // 重新设置当前页码
   currentPage.value = val;
-  searchDevice();
+  searchProductionLine();
 };
 
-//重置设备信息
-const resetDevice = () => {
-  device.value = {
-    deviceId: "",
-    deviceName: "",
-    deviceType: "",
+//重置产线信息
+const resetProductionLine = () => {
+  productionLine.value = {
+    lineId: "",
+    lineName: "",
+    lineType: "",
     status: "",
   };
 };
-//新增设备按钮点击事件
-const handleAddDevice = () => {
-  resetDevice(); // 重置 user 对象属性为初始状态
-  showAddDevice.value = true; // 打开新增用户对话框
+//新增产线按钮点击事件
+const handleAddProductionLine = () => {
+  resetProductionLine(); // 重置 productionLine 对象属性为初始状态
+  showAddProductionLine.value = true; // 打开新增产线对话框
 };
 
 //处理编辑请求
 const handleEdit = async (id) => {
   //打开窗口
-  showAddDevice.value = true;
+  showAddProductionLine.value = true;
   //发送请求
   const result = await selectById(id);
   if (result.data.code === 1) {
-    device.value = result.data.data;
+    productionLine.value = result.data.data;
   } else {
     ElMessage.error(result.data.msg);
   }
@@ -242,7 +247,7 @@ const handleDelete = (id) => {
       const result = await deleteById(id);
       if (result.data.code === 1) {
         ElMessage.success("删除成功");
-        searchDevice();
+        searchProductionLine();
       } else {
         ElMessage.error(result.data.msg);
       }
@@ -262,14 +267,14 @@ const deleteByIds = () => {
     .then(() => {
       // 设备点击确认按钮
       // 1. 创建id数组, 从 multipleSelection 获取即可
-      selectedIds.value = multipleSelection.value.map((item) => item.deviceId);
+      selectedIds.value = multipleSelection.value.map((item) => item.lineId);
 
       // 2. 发送AJAX请求
       deleteById(selectedIds.value).then((resp) => {
         if (resp.data.code === 1) {
           // 删除成功
           ElMessage.success("恭喜你，删除成功");
-          searchDevice();
+          searchProductionLine();
         } else {
           ElMessage.error(resp.data.msg);
         }
@@ -287,16 +292,16 @@ const submitAdd = async () => {
   const valid = await formRef.value.validate();
   if (valid) {
     let method;
-    if (device.value.deviceId) {
-      method = update(device.value); // 修改
+    if (productionLine.value.lineId) {
+      method = update(productionLine.value); // 修改
     } else {
-      method = add(device.value); // 添加
+      method = add(productionLine.value); // 添加
     }
     const result = await method;
     if (result.data.code === 1) {
       ElMessage.success("保存成功");
-      searchDevice();
-      showAddDevice.value = false;
+      searchProductionLine();
+      showAddProductionLine.value = false;
     } else {
       ElMessage.error(result.data.msg);
     }
@@ -306,7 +311,7 @@ const submitAdd = async () => {
 };
 
 onMounted(() => {
-  searchDevice();
+  searchProductionLine();
 });
 </script>
 
