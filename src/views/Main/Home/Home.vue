@@ -48,18 +48,18 @@ const leftIndex = ref(0);
 const rightIndex = ref(0);
 const banners = ref([
   {
-    url: "/src/assets/images/lunbo-1.png",
+    url: "/images/lunbo-1.png",
     name: "设备运行大屏",
     enName: "Device Running Screen",
     link: "/equip/OperVisual",
   },
   {
-    url: "/src/assets/images/lunbo-2.png",
+    url: "/images/lunbo-2.png",
     name: "报警监控大屏",
     enName: "Alarm Monitoring Screen",
     link: "/equip/Mainten",
   },
-  { url: "/src/assets/images/lunbo-3.png", name: "产线数据大屏", enName: "Line Data Screen", link: "/exp/QA" },
+  { url: "/images/lunbo-3.png", name: "产线数据大屏", enName: "Line Data Screen", link: "/exp/QA" },
 ]);
 
 // const timer = ref(null);

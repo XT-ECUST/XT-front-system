@@ -1,57 +1,57 @@
 import request from '../src/utils/request'
 
 // 分页查询物料列表
-export function page(name, type, pageNum, pageSize) {
+export const page = (code, name, page, pageSize) => {
     return request({
-        url: '/material/list',
+        url: '/materials',
         method: 'get',
         params: {
+            code,
             name,
-            type,
-            pageNum,
+            page,
             pageSize
         }
     })
 }
 
 // 根据ID查询物料
-export function selectById(id) {
+export const selectById = (id) => {
     return request({
-        url: `/material/${id}`,
+        url: `/materials/${id}`,
         method: 'get'
     })
 }
 
 // 新增物料
-export function add(data) {
+export const add = (data) => {
     return request({
-        url: '/material',
+        url: '/materials',
         method: 'post',
         data
     })
 }
 
 // 修改物料
-export function update(data) {
+export const update = (data) => {
     return request({
-        url: '/material',
+        url: '/materials',
         method: 'put',
         data
     })
 }
 
 // 删除单个物料
-export function deleteById(id) {
+export const deleteById = (ids) => {
     return request({
-        url: `/material/${id}`,
+        url: `/materials/${ids}`,
         method: 'delete'
     })
 }
 
 // 批量删除物料
-export function deleteByIds(ids) {
+export const deleteByIds = (ids) => {
     return request({
-        url: '/material/batch',
+        url: '/materials/batch',
         method: 'delete',
         data: ids
     })

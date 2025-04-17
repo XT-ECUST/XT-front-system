@@ -90,14 +90,19 @@ const routes = [
             meta: { title: "能源管理", icon: 'promotion' },
           },
           {
-            path: "/create/LineDataAna",
-            component: () => import("../views/Main/create/LineDataAna.vue"),
-            meta: { title: "产线数据分析", icon: 'promotion' },
+            path: "/create/LineMan",
+            component: () => import("../views/Main/create/LineMan.vue"),
+            meta: { title: "产线管理", icon: 'promotion' },
           },
+          // {
+          //   path: "/create/inventory",
+          //   component: () => import("../views/Main/create/InventoryManagement.vue"),
+          //   meta: { title: "库存管理", icon: 'promotion' },
+          // },
           {
-            path: "/create/Alarm",
-            component: () => import("../views/Main/create/Alarm.vue"),
-            meta: { title: "报警管理", icon: 'promotion' },
+            path: "/create/inventoryInOut",
+            component: () => import("../views/Main/create/InventoryInOutMan.vue"),
+            meta: { title: "库存管理", icon: 'promotion' },
           },
           {
             path: "/create/Oper",
