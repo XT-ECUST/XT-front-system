@@ -59,6 +59,11 @@ const routes = [
             meta: { title: "运行数据管理", icon: 'promotion' },
           },
           {
+            path: "/equip/DeviceMaintenance",
+            component: () => import("../views/Main/equip/DeviceMaintenance.vue"),
+            meta: { title: "设备维保", icon: 'promotion' },
+          },
+          {
             path: "/equip/OperVisual",
             component: () => import("../views/Main/equip/DeviceScreen.vue"),
             meta: { title: "设备运行大屏", icon: 'promotion' },

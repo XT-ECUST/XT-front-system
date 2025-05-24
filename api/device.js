@@ -7,6 +7,13 @@ export function page(deviceName, deviceType, page, pageSize) {
     })
 }
 
+export function getAll() {
+    return request({
+        url: '/devices/all',
+        method: 'get'
+    })
+}
+
 export function add(device) {
     return request({
         url: '/devices',
