@@ -61,7 +61,12 @@ const routes = [
           {
             path: "/equip/DeviceMaintenance",
             component: () => import("../views/Main/equip/DeviceMaintenance.vue"),
-            meta: { title: "设备维保", icon: 'promotion' },
+            meta: { title: "设备维保管理", icon: 'promotion' },
+          },
+          {
+            path: "/equip/DeviceFault",
+            component: () => import("../views/Main/equip/DeviceFault.vue"),
+            meta: { title: "设备故障管理", icon: 'promotion' },
           },
           {
             path: "/equip/OperVisual",
