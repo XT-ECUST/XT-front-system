@@ -53,13 +53,13 @@ const banners = ref([
     enName: "Device Running Screen",
     link: "/equip/OperVisual",
   },
+  { url: "/images/lunbo-2.png", name: "多晶硅问答助手", enName: "Line Data Screen", link: "/exp/QA" },
   {
-    url: "/images/lunbo-2.png",
+    url: "/images/lunbo-3.png",
     name: "报警监控大屏",
     enName: "Alarm Monitoring Screen",
     link: "/equip/Mainten",
   },
-  { url: "/images/lunbo-3.png", name: "产线数据大屏", enName: "Line Data Screen", link: "/exp/QA" },
 ]);
 
 // const timer = ref(null);

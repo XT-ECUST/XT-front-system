@@ -31,11 +31,11 @@ const routes = [
             component: () => import("../views/Main/exp/CanvasExp.vue"),
             meta: { title: "操作面板", icon: "Filter" },
           },
-          {
-            path: "/exp/ResultAna",
-            component: () => import("../views/Main/exp/ResultAna.vue"),
-            meta: { title: "结果分析", icon: "Histogram" },
-          },
+          // {
+          //   path: "/exp/ResultAna",
+          //   component: () => import("../views/Main/exp/ResultAna.vue"),
+          //   meta: { title: "结果分析", icon: "Histogram" },
+          // },
           {
             path: "/exp/QA",
             component: () => import("../views/Main/exp/QA.vue"),
@@ -104,11 +104,11 @@ const routes = [
             component: () => import("../views/Main/create/InventoryInOutMan.vue"),
             meta: { title: "库存管理", icon: 'promotion' },
           },
-          {
-            path: "/create/Oper",
-            component: () => import("../views/Main/create/OperRecordMan.vue"),
-            meta: { title: "操作记录管理", icon: 'promotion' },
-          },
+          // {
+          //   path: "/create/Oper",
+          //   component: () => import("../views/Main/create/OperRecordMan.vue"),
+          //   meta: { title: "操作记录管理", icon: 'promotion' },
+          // },
           {
             path: "/create/MaterialMan",
             component: () => import("../views/Main/create/MaterialMan.vue"),
