@@ -46,7 +46,11 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="type" label="维保类型" width="180" header-align="center" align="center" />
+      <el-table-column prop="type" label="维保类型" width="180" header-align="center" align="center">
+        <template #default="{ row }">
+          {{ maintenanceTypeMap.get(row.type) || row.type }}
+        </template>
+      </el-table-column>
       <el-table-column prop="description" label="维保描述" width="300" header-align="center" align="center" />
       <el-table-column prop="startTime" label="维保时间" width="180" header-align="center" align="center" />
       <el-table-column prop="maintainer" label="维保人员" width="180" header-align="center" align="center" />
@@ -193,6 +197,13 @@ const rules = {
   startTime: [{ required: true, message: "请选择维保时间", trigger: "change" }],
   maintainer: [{ required: true, message: "请输入维保人员", trigger: "blur" }],
 };
+
+// 维保类型映射
+const maintenanceTypeMap = new Map([
+  ["regular", "定期维保"],
+  ["repair", "故障维修"],
+  ["inspection", "设备巡检"],
+]);
 
 //清空查询条件
 const clearAll = () => {
