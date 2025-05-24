@@ -53,7 +53,11 @@
       </el-table-column>
       <el-table-column prop="description" label="维保描述" width="300" header-align="center" align="center" />
       <el-table-column prop="startTime" label="维保时间" width="180" header-align="center" align="center" />
-      <el-table-column prop="maintainer" label="维保人员" width="180" header-align="center" align="center" />
+      <el-table-column prop="maintainer" label="维保人员" width="180" header-align="center" align="center">
+        <template #default="{ row }">
+          {{ userMap.get(Number(row.maintainer))?.name || row.maintainer }}
+        </template>
+      </el-table-column>
       <el-table-column fixed="right" label="操作" width="300" align="center">
         <template #default="{ row }">
           <el-button type="primary" size="small" plain icon="Edit" @click="handleEdit(row.id)"> 编辑 </el-button>
@@ -110,7 +114,9 @@
           />
         </el-form-item>
         <el-form-item label="维保人员" prop="maintainer">
-          <el-input v-model="maintenance.maintainer" placeholder="请输入维保人员" />
+          <el-select v-model="maintenance.maintainer" placeholder="请选择维保人员" clearable>
+            <el-option v-for="user in userOptions" :key="user.value" :label="user.label" :value="user.value" />
+          </el-select>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -129,6 +135,7 @@ import { ElMessage, ElMessageBox } from "element-plus";
 import type { FormInstance } from "element-plus";
 import { page, add, update, deleteById, selectById } from "../../../../api/maintain.js";
 import { page as devicePage } from "../../../../api/device.js";
+import { useUser } from "../../../hooks/useUser.js";
 
 interface Maintenance {
   id: string | number;
@@ -204,6 +211,9 @@ const maintenanceTypeMap = new Map([
   ["repair", "故障维修"],
   ["inspection", "设备巡检"],
 ]);
+
+//使用用户钩子
+const { userOptions, userMap, loadUserOptions } = useUser();
 
 //清空查询条件
 const clearAll = () => {
@@ -388,9 +398,11 @@ const loadDeviceList = () => {
   });
 };
 
+// 在组件挂载时加载用户列表
 onMounted(() => {
   searchMaintenance();
   loadDeviceList();
+  loadUserOptions();
 });
 </script>
 
