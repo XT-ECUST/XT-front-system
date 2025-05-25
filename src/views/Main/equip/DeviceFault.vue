@@ -7,10 +7,11 @@
           <el-input v-model="faultSearch.deviceName" placeholder="设备名称" clearable />
         </el-form-item>
         <el-form-item label="状态">
-          <el-select v-model="faultSearch.status" placeholder="状态" clearable>
+          <el-select v-model="faultSearch.status" placeholder="状态" clearable style="width: 120px">
             <el-option label="待处理" value="pending" />
             <el-option label="处理中" value="processing" />
             <el-option label="已解决" value="resolved" />
+            <el-option label="已关闭" value="closed" />
           </el-select>
         </el-form-item>
         <el-form-item>
@@ -39,10 +40,26 @@
       <el-table-column prop="status" label="故障状态" width="180" header-align="center" align="center">
         <template #default="{ row }">
           <el-tag
-            :type="row.status === 'pending' ? 'danger' : row.status === 'processing' ? 'warning' : 'success'"
+            :type="
+              row.status === 'pending'
+                ? 'danger'
+                : row.status === 'processing'
+                ? 'warning'
+                : row.status === 'resolved'
+                ? 'success'
+                : 'info'
+            "
             style="width: 80px; margin-right: 10px"
           >
-            {{ row.status === "pending" ? "待处理" : row.status === "processing" ? "处理中" : "已解决" }}
+            {{
+              row.status === "pending"
+                ? "待处理"
+                : row.status === "processing"
+                ? "处理中"
+                : row.status === "resolved"
+                ? "已解决"
+                : "已关闭"
+            }}
           </el-tag>
         </template>
       </el-table-column>
@@ -96,6 +113,7 @@
             <el-radio label="pending">待处理</el-radio>
             <el-radio label="processing">处理中</el-radio>
             <el-radio label="resolved">已解决</el-radio>
+            <el-radio label="closed">已关闭</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="故障类型" prop="type">

@@ -69,6 +69,11 @@ const routes = [
             meta: { title: "设备故障管理", icon: 'promotion' },
           },
           {
+            path: "/equip/FaultHandling",
+            component: () => import("../views/Main/equip/FaultHandling.vue"),
+            meta: { title: "故障处理中心", icon: 'promotion' },
+          },
+          {
             path: "/equip/OperVisual",
             component: () => import("../views/Main/equip/DeviceScreen.vue"),
             meta: { title: "设备运行大屏", icon: 'promotion' },
@@ -140,6 +145,11 @@ const routes = [
             path: "/users/deptManage",
             component: () => import("../views/Main/User/deptManage.vue"),
             meta: { title: "部门管理", icon: 'promotion' },
+          },
+          {
+            path: "/users/SourceManage",
+            component: () => import("../views/Main/User/SourceManage.vue"),
+            meta: { title: "资源管理", icon: 'promotion' },
           },
         ],
       },
